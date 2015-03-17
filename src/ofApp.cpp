@@ -41,7 +41,7 @@ void ofApp::draw(){
 
   for(Circle c : circles){
     ofSetColor(c.c);
-    ofDrawCircle(c.x,c.y,c.r,c.r);
+    ofDrawCircle(c.x,c.y,c.r);
   }
   ofSetColor(selectedColor);
   ofDrawRectangle(mouseX-10,mouseY-10,20,20);
