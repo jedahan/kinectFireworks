@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define MS_FOR_SELECTION 5000
+#define MS_FOR_SELECTION 3000
 
 void ofApp::setup(){
   int w = ofGetViewportWidth();
@@ -24,15 +24,22 @@ void ofApp::update(){
   if(s){
     ofPoint p = ofPoint(s->x,s->y);
     float r = s->r+20;
-    float pct = (ofGetElapsedTimeMillis()-startTime)/MS_FOR_SELECTION;
-    if(pct > 0.02){
+    float percent = (ofGetElapsedTimeMillis()-startTime)/MS_FOR_SELECTION;
+    if(percent > 360/line.getCircleResolution()/100){
       line.moveTo(p);
-      line.arc(p,r,r,0,360*pct);
+      line.arc(p,r,r,270,270+360*percent);
     }
   }
   if(endTime > 0 && ofGetElapsedTimeMillis() >= endTime){
     ofMessage msg(ofToString("selected"));
     ofSendMessage(msg);
+  }
+  for( ofMesh firework : fireworks ) {
+    ofVec3f * vertices = firework.getVerticesPointer();
+
+    for( int i = 0; i < vertices->length(); i++){
+      firework.getVertex(i)  += ofRandom(5);
+    }
   }
 }
 
