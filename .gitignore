@@ -5,3 +5,4 @@ bin/libs/
 fireworks.cbp
 fireworks.workspace
 obj/
+*.ycm*
