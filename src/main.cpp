@@ -2,6 +2,8 @@
 #include "ofApp.h"
 
 int main(){
-	ofSetupOpenGL(1024, 768, OF_WINDOW);
-	ofRunApp(new ofApp());
+  ofAppGlutWindow window;
+  ofSetupOpenGL(1024, 768, OF_FULLSCREEN);
+  ofHideCursor();
+  ofRunApp(new ofApp());
 }

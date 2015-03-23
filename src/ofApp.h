@@ -6,6 +6,7 @@
 
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
+#include "ofxCvBlob.h"
 
 class ofApp : public ofBaseApp{
 
@@ -43,7 +44,6 @@ class ofApp : public ofBaseApp{
     float endTime;
 
     ofxKinect kinect;
-    ofxCvColorImage colorImg;
 
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
@@ -51,8 +51,7 @@ class ofApp : public ofBaseApp{
 
     ofxCvContourFinder contourFinder;
 
-    bool bThreshWithOpenCV;
-    bool bDrawPointCloud;
+    ofImage cursor;
 
     int nearThreshold;
     int farThreshold;
