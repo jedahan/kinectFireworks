@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 #define MS_FOR_SELECTION 3000
+#define DEBUG false
 
 void ofApp::setup(){
   ofEnableSmoothing();
@@ -8,9 +9,10 @@ void ofApp::setup(){
   ofGetWindowPtr()->setWindowTitle("fireworks");
   startTime = endTime = -1;
 
-  cursor.load("cursor.png");
   mouseX = ofGetWidth()/2;
   mouseY = ofGetHeight()/2;
+  cursor.load("cursor.png");
+  cursor.setAnchorPercent(0.5,0.5);
   setupCircles();
   setupKinect();
 }
@@ -19,9 +21,9 @@ void ofApp::setupCircles() {
   int w = ofGetViewportWidth();
   int h = ofGetViewportHeight();
   ofSetCircleResolution(180);
-  circles.push_back(Circle(ofColor(0,255,255), 2 * w/6, h/2, 100));
-  circles.push_back(Circle(ofColor(255,0,255), 3 * w/6, h/2, 100));
-  circles.push_back(Circle(ofColor(255,255,0), 4 * w/6, h/2, 100));
+  circles.push_back(Circle(ofColor(0,255,255), 2 * w/6, 1/5*h, 100));
+  circles.push_back(Circle(ofColor(255,0,255), 3 * w/6, 1/5*h, 100));
+  circles.push_back(Circle(ofColor(255,255,0), 4 * w/6, 1/5*h, 100));
   selectedColor = circles[0].c;
   line.setStrokeWidth(1);
   line.setCircleResolution(180);
@@ -29,26 +31,56 @@ void ofApp::setupCircles() {
 
 void ofApp::setupKinect() {
   kinect.setRegistration(true);
-  kinect.init(false, false); // disable video image (faster fps)
+  kinect.init();
   kinect.open();
 
   grayImage.allocate(kinect.width, kinect.height);
   grayThreshNear.allocate(kinect.width, kinect.height);
   grayThreshFar.allocate(kinect.width, kinect.height);
 
-  nearThreshold = 230;
-  farThreshold = 200;
+  nearThreshold = 255;
+  farThreshold = 230;
 
-  ofSetFrameRate(60);
+  ofSetFrameRate(30);
 
-  angle = 0;
+  angle = 15;
   kinect.setCameraTiltAngle(angle);
+  kinect.setLed(ofxKinect::LED_OFF);
 }
 
 void ofApp::update(){
+  updateKinect();
+  updateCircles();
+  updateFireworks();
+}
+
+void ofApp::updateKinect() {
+  kinect.update();
+  if(kinect.isFrameNew()){
+    grayImage.setFromPixels(kinect.getDepthPixels());
+    grayThreshNear = grayImage;
+    grayThreshFar = grayImage;
+    grayThreshNear.threshold(nearThreshold, true);
+    grayThreshFar.threshold(farThreshold);
+    cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
+    grayImage.flagImageChanged();
+    contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
+    if(contourFinder.nBlobs > 0) {
+      const float w = kinect.width;
+      const float h = kinect.height;
+      const float newX = ofMap(contourFinder.blobs[0].centroid.x, 1/5 * w, 4/5 * w, ofGetWidth(), 0);
+      const float newY = ofMap(contourFinder.blobs[0].centroid.y, 1/5 * h, 4/5 * h, 0, ofGetHeight());     
+      mouseX = ofLerp(mouseX, newX, 0.09);
+      mouseY = ofLerp(mouseY, newY, 0.09);
+      mouseMoved(mouseX, mouseY);
+    }
+  }
+}
+
+void ofApp::updateCircles() {
   line.clear();
   Circle * s = whichCircle();
-  if(s){
+  if(s && s->c != selectedColor){
     ofPoint p = ofPoint(s->x,s->y);
     float r = s->r+20;
     float percent = (ofGetElapsedTimeMillis()-startTime)/MS_FOR_SELECTION;
@@ -58,10 +90,12 @@ void ofApp::update(){
     }
   }
   if(endTime > 0 && ofGetElapsedTimeMillis() >= endTime){
-    ofMessage msg(ofToString("selected"));
-    ofSendMessage(msg);
+    selectedColor = whichCircle()->c;
     endTime = startTime = -1;
   }
+}
+
+void ofApp::updateFireworks() {
   for( ofMesh firework : fireworks ) {
     ofVec3f * vertices = firework.getVerticesPointer();
 
@@ -73,7 +107,15 @@ void ofApp::update(){
   }
 }
 
-void ofApp::draw(){
+void ofApp::draw() {
+  drawCircles();
+  drawFireworks();
+  if(DEBUG) drawKinect();
+  ofSetColor(selectedColor);
+  cursor.draw(mouseX,mouseY);
+}
+
+void ofApp::drawCircles() {
   if( endTime > 0)
     line.draw();
 
@@ -81,10 +123,10 @@ void ofApp::draw(){
     ofSetColor(c.c);
     ofDrawCircle(c.x,c.y,c.r);
   }
-  ofSetColor(selectedColor);
-  cursor.setAnchorPercent(0.5,0.5);
-  cursor.draw(mouseX,mouseY);
-  for(ofMesh firework : fireworks){
+}
+
+void ofApp::drawFireworks() {
+ for(ofMesh firework : fireworks){
     firework.drawVertices();
   }
 }
@@ -93,7 +135,20 @@ void ofApp::keyReleased(int key){
 
 }
 
+void ofApp::checkForSwipe(){
+  if(points.size() > 30){
+    const ofPoint p0 = points[points.size()-31];
+    const ofPoint p1 = points[points.size()-1];
+    if(ofDistSquared(p0.x,p0.y,p1.x,p1.y)>100){
+	    cout << "xplode"<<endl;
+    //  explode(p1.x,p1.y);
+    }
+  }
+}
+
 void ofApp::mouseMoved(int x, int y){
+  points.push_back(ofPoint(x,y));
+  checkForSwipe();
   if(whichCircle() && startTime < 0) {
     startTime = ofGetElapsedTimeMillis();
     endTime = startTime + MS_FOR_SELECTION;
@@ -150,7 +205,6 @@ void ofApp::windowResized(int w, int h){
 }
 
 void ofApp::gotMessage(ofMessage msg) {
-  selectedColor = whichCircle()->c;
 }
 
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
@@ -158,56 +212,26 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 
-void ofApp::updateKinect() {
-
-  ofBackground(100, 100, 100);
-
-  kinect.update();
-
-  // there is a new frame and we are connected
-  if(kinect.isFrameNew()) {
-
-    // load grayscale depth image from the kinect source
-    grayImage.setFromPixels(kinect.getDepthPixels());
-
-    // we do two thresholds - one for the far plane and one for the near plane
-    // we then do a cvAnd to get the pixels which are a union of the two thresholds
-    grayThreshNear = grayImage;
-    grayThreshFar = grayImage;
-    grayThreshNear.threshold(nearThreshold, true);
-
-    grayThreshFar.threshold(farThreshold);
-    cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-
-   // update the cv images
-   grayImage.flagImageChanged();
-
-  // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-  // also, find holes is set to true so we will get interior contours as well...
-    contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
-  }
-
-}
-
 void ofApp::drawKinect() {
   ofSetColor(255, 255, 255);
-  contourFinder.draw(10, 320, 400, 300);
-  ofxCvBlob hand = contourFinder.blobs.at(0);
-  mouseX = hand.centroid.x;
-  mouseY = hand.centroid.y;
+  float offset = ofGetHeight()-400;
+  kinect.draw(10,offset,400,300);
+  kinect.drawDepth(410,offset,400,300);
+  grayImage.draw(810,offset,400,300);
+  contourFinder.draw(1210, offset, 400, 300);
 
   // draw instructions
   ofSetColor(255, 255, 255);
   stringstream reportStream;
 
-    if(kinect.hasAccelControl()) {
-        reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
-        << ofToString(kinect.getMksAccel().y, 2) << " / "
-        << ofToString(kinect.getMksAccel().z, 2) << endl;
-    } else {
-        reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device," << endl
-    << "motor / led / accel controls are not currently supported" << endl << endl;
-    }
+  if(kinect.hasAccelControl()) {
+      reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
+      << ofToString(kinect.getMksAccel().y, 2) << " / "
+      << ofToString(kinect.getMksAccel().z, 2) << endl;
+  } else {
+      reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device," << endl
+  << "motor / led / accel controls are not currently supported" << endl << endl;
+  }
 
   reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
   << "set near threshold " << nearThreshold << " (press: + -)" << endl
@@ -215,12 +239,13 @@ void ofApp::drawKinect() {
   << ", fps: " << ofGetFrameRate() << endl
   << "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl;
 
-    if(kinect.hasCamTiltControl()) {
-      reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-        << "press 1-5 & 0 to change the led mode" << endl;
-    }
+  if(kinect.hasCamTiltControl()) {
+    reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
+      << "press 1-5 & 0 to change the led mode" << endl;
+  }
 
-  ofDrawBitmapString(reportStream.str(), 20, 652);
+  ofSetColor(255,255,255);
+  ofDrawBitmapString(reportStream.str(), 20, 20);
 }
 
 void ofApp::exit() {
@@ -265,30 +290,6 @@ void ofApp::keyPressed (int key) {
     case 'c':
       kinect.setCameraTiltAngle(0); // zero the tilt
       kinect.close();
-      break;
-
-    case '1':
-      kinect.setLed(ofxKinect::LED_GREEN);
-      break;
-
-    case '2':
-      kinect.setLed(ofxKinect::LED_YELLOW);
-      break;
-
-    case '3':
-      kinect.setLed(ofxKinect::LED_RED);
-      break;
-
-    case '4':
-      kinect.setLed(ofxKinect::LED_BLINK_GREEN);
-      break;
-
-    case '5':
-      kinect.setLed(ofxKinect::LED_BLINK_YELLOW_RED);
-      break;
-
-    case '0':
-      kinect.setLed(ofxKinect::LED_OFF);
       break;
 
     case OF_KEY_UP:

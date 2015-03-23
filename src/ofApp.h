@@ -27,12 +27,22 @@ class ofApp : public ofBaseApp{
     void exit();
 
     void explode(int x, int y);
+    void checkForSwipe();
+
     void setupKinect();
-    void drawKinect();
     void updateKinect();
+    void drawKinect();
+
     void setupCircles();
+    void updateCircles();
+    void drawCircles();
+
+    void setupFireworks();
+    void updateFireworks();
+    void drawFireworks();
 
     vector<Circle> circles;
+    vector<ofPoint> points;
     bool pointInCircle(int pX, int pY, Circle c);
     Circle * whichCircle();
     ofColor selectedColor;
