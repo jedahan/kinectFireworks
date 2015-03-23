@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 #define MS_FOR_SELECTION 3000
-#define DEBUG false
+#define DEBUG true
 
 void ofApp::setup(){
   ofEnableSmoothing();
@@ -21,9 +21,9 @@ void ofApp::setupCircles() {
   int w = ofGetViewportWidth();
   int h = ofGetViewportHeight();
   ofSetCircleResolution(180);
-  circles.push_back(Circle(ofColor(0,255,255), 2 * w/6, 1/5*h, 100));
-  circles.push_back(Circle(ofColor(255,0,255), 3 * w/6, 1/5*h, 100));
-  circles.push_back(Circle(ofColor(255,255,0), 4 * w/6, 1/5*h, 100));
+  circles.push_back(Circle(ofColor(0,255,255), 2 * w/6, h/2, 100));
+  circles.push_back(Circle(ofColor(255,0,255), 3 * w/6, h/2, 100));
+  circles.push_back(Circle(ofColor(255,255,0), 4 * w/6, h/2, 100));
   selectedColor = circles[0].c;
   line.setStrokeWidth(1);
   line.setCircleResolution(180);
