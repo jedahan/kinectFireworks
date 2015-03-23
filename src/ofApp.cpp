@@ -9,6 +9,8 @@ void ofApp::setup(){
   startTime = endTime = -1;
 
   cursor.load("cursor.png");
+  mouseX = ofGetWidth()/2;
+  mouseY = ofGetHeight()/2;
   setupCircles();
   setupKinect();
 }
@@ -58,6 +60,7 @@ void ofApp::update(){
   if(endTime > 0 && ofGetElapsedTimeMillis() >= endTime){
     ofMessage msg(ofToString("selected"));
     ofSendMessage(msg);
+    endTime = startTime = -1;
   }
   for( ofMesh firework : fireworks ) {
     ofVec3f * vertices = firework.getVerticesPointer();
@@ -71,7 +74,8 @@ void ofApp::update(){
 }
 
 void ofApp::draw(){
-  line.draw();
+  if( endTime > 0)
+    line.draw();
 
   for(Circle c : circles){
     ofSetColor(c.c);

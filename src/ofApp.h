@@ -10,20 +10,20 @@
 
 class ofApp : public ofBaseApp{
 
-	public:
-		void setup();
-		void update();
-		void draw();
+  public:
+    void setup();
+    void update();
+    void draw();
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y );
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
     void exit();
 
     void explode(int x, int y);
@@ -31,7 +31,7 @@ class ofApp : public ofBaseApp{
     void drawKinect();
     void updateKinect();
     void setupCircles();
-		
+
     vector<Circle> circles;
     bool pointInCircle(int pX, int pY, Circle c);
     Circle * whichCircle();

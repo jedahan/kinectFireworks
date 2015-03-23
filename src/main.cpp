@@ -3,7 +3,7 @@
 
 int main(){
   ofAppGlutWindow window;
-  ofSetupOpenGL(1024, 768, OF_FULLSCREEN);
+  ofSetupOpenGL(&window, 1024, 768, OF_FULLSCREEN);
   ofHideCursor();
   ofRunApp(new ofApp());
 }
