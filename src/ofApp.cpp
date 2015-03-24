@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 #define MS_FOR_SELECTION 3000
-#define DEBUG true
+#define DEBUG false
 
 void ofApp::setup(){
   ofEnableSmoothing();
