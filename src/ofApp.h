@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp{
     void gotMessage(ofMessage msg);
     void exit();
 
-    void explode(int x, int y);
+    void explode(int x0, int y0, int x1, int y1);
     void checkForSwipe();
 
     void setupKinect();
@@ -41,8 +41,10 @@ class ofApp : public ofBaseApp{
     void updateFireworks();
     void drawFireworks();
 
+    void updateTrail();
+
+    ofPolyline trail;
     vector<Circle> circles;
-    vector<ofPoint> points;
     bool pointInCircle(int pX, int pY, Circle c);
     Circle * whichCircle();
     ofColor selectedColor;
@@ -62,6 +64,7 @@ class ofApp : public ofBaseApp{
     ofxCvContourFinder contourFinder;
 
     ofImage cursor;
+    ofImage highlight;
 
     int nearThreshold;
     int farThreshold;

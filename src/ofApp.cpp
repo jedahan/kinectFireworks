@@ -13,6 +13,9 @@ void ofApp::setup(){
   mouseY = ofGetHeight()/2;
   cursor.load("cursor.png");
   cursor.setAnchorPercent(0.5,0.5);
+  highlight.load("cursor.png");
+  highlight.resize(cursor.getWidth()*1.1,cursor.getHeight()*1.15);
+  highlight.setAnchorPercent(0.5,0.5);
   setupCircles();
   setupKinect();
 }
@@ -43,15 +46,36 @@ void ofApp::setupKinect() {
 
   ofSetFrameRate(30);
 
-  angle = 15;
+  angle = 20;
   kinect.setCameraTiltAngle(angle);
   kinect.setLed(ofxKinect::LED_OFF);
 }
 
-void ofApp::update(){
+void ofApp::update() {
+  updateTrail();
   updateKinect();
   updateCircles();
   updateFireworks();
+}
+
+void ofApp::updateTrail() {
+  trail.addVertex(mouseX, mouseY);
+
+  if(trail.size() > ofGetFrameRate() / 2) {
+    ofPolyline tmp;
+    for( int i=1; i<trail.size(); i++ ){
+      tmp.addVertex(trail[i]);
+    }
+    trail = tmp;
+    float x0 = trail[0].x, y0 = trail[0].y;
+    float x1 = trail[trail.size()-1].x, y1 = trail[trail.size()-1].y;
+
+    if(ofDist(x0,y0,x1,y1) > ofGetWidth()/6) {
+      explode(x0,y0,x1,y1);
+      trail.clear();
+    }
+  }
+
 }
 
 void ofApp::updateKinect() {
@@ -65,11 +89,12 @@ void ofApp::updateKinect() {
     cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
     grayImage.flagImageChanged();
     contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
+
     if(contourFinder.nBlobs > 0) {
       const float w = kinect.width;
       const float h = kinect.height;
-      const float newX = ofMap(contourFinder.blobs[0].centroid.x, 1/5 * w, 4/5 * w, ofGetWidth(), 0);
-      const float newY = ofMap(contourFinder.blobs[0].centroid.y, 1/5 * h, 4/5 * h, 0, ofGetHeight());     
+      const float newX = ofMap(contourFinder.blobs[0].centroid.x, 0, w, ofGetWidth(), 0);
+      const float newY = ofMap(contourFinder.blobs[0].centroid.y, 0, h, 0, ofGetHeight());
       mouseX = ofLerp(mouseX, newX, 0.09);
       mouseY = ofLerp(mouseY, newY, 0.09);
       mouseMoved(mouseX, mouseY);
@@ -96,14 +121,13 @@ void ofApp::updateCircles() {
 }
 
 void ofApp::updateFireworks() {
-  for( ofMesh firework : fireworks ) {
-    ofVec3f * vertices = firework.getVerticesPointer();
-
-    for( int i = 0; i < vertices->length(); i++){
-      ofVec3f tmpVertex = firework.getVertex(i);
-      tmpVertex.x += 1;
-      firework.setVertex(i, tmpVertex);
+//  for( ofMesh firework : fireworks ) {
+  if(fireworks.size()>0){
+    ofMesh firework = fireworks[0];
+    for(int i=0; i<firework.getVertices().size(); i++){
+      firework.getVertices().at(i) += ofVec3f(25*(0.5-ofRandomuf()),25*(0.5-ofRandomuf()),0);
     }
+//  }
   }
 }
 
@@ -111,6 +135,9 @@ void ofApp::draw() {
   drawCircles();
   drawFireworks();
   if(DEBUG) drawKinect();
+  trail.draw();
+  ofSetColor(255,255,255);
+  highlight.draw(mouseX,mouseY);
   ofSetColor(selectedColor);
   cursor.draw(mouseX,mouseY);
 }
@@ -136,19 +163,10 @@ void ofApp::keyReleased(int key){
 }
 
 void ofApp::checkForSwipe(){
-  if(points.size() > 30){
-    const ofPoint p0 = points[points.size()-31];
-    const ofPoint p1 = points[points.size()-1];
-    if(ofDistSquared(p0.x,p0.y,p1.x,p1.y)>100){
-	    cout << "xplode"<<endl;
-    //  explode(p1.x,p1.y);
-    }
-  }
+
 }
 
 void ofApp::mouseMoved(int x, int y){
-  points.push_back(ofPoint(x,y));
-  checkForSwipe();
   if(whichCircle() && startTime < 0) {
     startTime = ofGetElapsedTimeMillis();
     endTime = startTime + MS_FOR_SELECTION;
@@ -176,10 +194,10 @@ bool ofApp::pointInCircle(int pX, int pY, Circle c) {
     return dx*dx + dy*dy <= c.r*c.r;
 }
 
-void ofApp::explode(int x, int y){
+void ofApp::explode(int x0, int y0, int x1, int y1){
   ofMesh firework;
-  for(int i=0; i<1000; i++){
-    firework.addVertex(ofVec3f(x+(ofRandom(80)-40),(y+ofRandom(80)-40),0));
+  for(int i=0; i<100; i++){
+    firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
     firework.addColor(ofColor(selectedColor));
   }
   fireworks.push_back(firework);
@@ -187,7 +205,7 @@ void ofApp::explode(int x, int y){
 
 void ofApp::mousePressed(int x, int y, int button){
   if (!whichCircle()) {
-    explode(x,y);
+    explode(x,y,ofRandom(ofGetWidth()),ofRandom(ofGetHeight()));
   }
 }
 
