@@ -121,13 +121,10 @@ void ofApp::updateCircles() {
 }
 
 void ofApp::updateFireworks() {
-//  for( ofMesh firework : fireworks ) {
-  if(fireworks.size()>0){
-    ofMesh firework = fireworks[0];
-    for(int i=0; i<firework.getVertices().size(); i++){
+  for( ofMesh firework : fireworks ) {
+    for(int i=0; i<firework.getNumVertices(); i++){
       firework.getVertices().at(i) += ofVec3f(25*(0.5-ofRandomuf()),25*(0.5-ofRandomuf()),0);
     }
-//  }
   }
 }
 
@@ -154,8 +151,8 @@ void ofApp::drawCircles() {
 
 void ofApp::drawFireworks() {
  for(ofMesh firework : fireworks){
-    firework.drawVertices();
-  }
+   firework.drawVertices();
+ }
 }
 
 void ofApp::keyReleased(int key){
