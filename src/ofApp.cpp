@@ -121,9 +121,9 @@ void ofApp::updateCircles() {
 }
 
 void ofApp::updateFireworks() {
-  for( ofMesh firework : fireworks ) {
-    for(int i=0; i<firework.getNumVertices(); i++){
-      firework.getVertices().at(i) += ofVec3f(25*(0.5-ofRandomuf()),25*(0.5-ofRandomuf()),0);
+  for(int i=0; i< fireworks.size(); i++) {
+    for(int j=0; j<fireworks[i].getNumVertices(); j++){
+      fireworks[i].getVertices()[j] += ofPoint(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
     }
   }
 }
