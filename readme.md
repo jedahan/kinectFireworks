@@ -6,7 +6,7 @@ For BGC Interface Experience
 
   Background shows shooting fireworks
 
-  Text says **Welcome to Kinect Fireworks! Please make sure you are standing in the panel marked on the floor. When you're ready, hold your hand in from of the screen to register with the kinect**
+  Text says **Welcome to Kinect Fireworks! Please stand in the panel marked on the floor, then hold your hand in from of the screen to register with the kinect**
 
   Video shows someone performing the described action
 
