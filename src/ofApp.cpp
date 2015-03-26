@@ -9,7 +9,7 @@ void ofApp::setup(){
   sceneManager.add(new Play());
   sceneManager.setup();
 
-  ofSetLogLevel("ofxSceneManagerApp", OF_LOG_VERBOSE);
+  ofSetLogLevel("ofxScenesApp", OF_LOG_VERBOSE);
 
   // for keeping track of the previous scene
   lastScene = sceneManager.getCurrentSceneIndex();
@@ -20,7 +20,7 @@ void ofApp::setup(){
   // transition to the first scene
   // we use a timer because there seems to be a race condition
   // probably involving setup() not being done yet
-  timer.setup(1000);
+  timer.setup(500);
   timer.start(false);
   ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::interstitial);
 }
@@ -32,7 +32,7 @@ void ofApp::start(int &args) {
 void ofApp::interstitial(int &args) {
   ofRemoveListener(timer.TIMER_COMPLETE, this, &ofApp::interstitial);
   timer.stop();
-  timer.setup(3000);
+  timer.setup(500);
   timer.start(false);
   ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::start);
 }

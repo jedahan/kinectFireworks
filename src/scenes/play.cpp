@@ -1,7 +1,7 @@
 #include "play.h"
 
-#define MS_FOR_SELECTION 3000
-#define DEBUG false
+#define MS_FOR_SELECTION 1500
+#define DEBUG true
 
 void Play::setup() {
   ofEnableSmoothing();
@@ -43,11 +43,11 @@ void Play::setupKinect() {
   grayThreshFar.allocate(kinect.width, kinect.height);
 
   nearThreshold = 255;
-  farThreshold = 230;
+  farThreshold = 210;
 
-  ofSetFrameRate(30);
+  ofSetFrameRate(60);
 
-  angle = 20;
+  angle = 15;
   kinect.setCameraTiltAngle(angle);
   kinect.setLed(ofxKinect::LED_OFF);
 }
@@ -106,12 +106,11 @@ void Play::updateKinect() {
     contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
 
     if(contourFinder.nBlobs > 0) {
-      const float w = kinect.width;
-      const float h = kinect.height;
-      const float newX = ofMap(contourFinder.blobs[0].centroid.x, 0, w, ofGetWidth(), 0);
-      const float newY = ofMap(contourFinder.blobs[0].centroid.y, 0, h, 0, ofGetHeight());
-      ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, newX, 0.09);
-      ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, newY, 0.09);
+      const float xPct = ofMap(contourFinder.blobs[0].centroid.x, kinect.width,  0, -1.0, 1.0);
+      const float yPct = ofMap(contourFinder.blobs[0].centroid.y, 0, kinect.height, -1.0, 1.0);
+
+      ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, ofGetWidth()/2+(ofGetWidth()/2*xPct*1.3), 0.26);
+      ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, ofGetHeight()/2+(ofGetWidth()/2*yPct*1.3), 0.27);
       mouseMoved(ofGetAppPtr()->mouseX,ofGetAppPtr()->mouseY);
     }
   }
