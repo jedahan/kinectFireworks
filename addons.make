@@ -2,3 +2,4 @@ ofxKinect
 ofxKinectFeatures
 ofxOpenCv
 ofxScenes
+ofxSimpleTimer

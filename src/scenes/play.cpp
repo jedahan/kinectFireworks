@@ -18,7 +18,7 @@ void Play::setup() {
   highlight.setAnchorPercent(0.5,0.5);
   setupCircles();
   setupKinect();
-  ofLogNotice("Play") << "setup complete" << ofToString(selectedColor) << endl;
+  ofLogNotice("Play") << "setup complete " << ofToString(selectedColor) << endl;
 }
 
 void Play::setupCircles() {
