@@ -2,6 +2,13 @@
 
 For BGC Interface Experience
 
+### Requirements
+
+[openFrameworks](https://openframeworks.cc)
+
+  * [ofxScenes](https://github.com/jedahan/ofxScenes)
+  * [ofxSimpleTimer](https://github.com//ofxSimpleTimer)
+
 ## welcome screen
 
   Background shows shooting fireworks
