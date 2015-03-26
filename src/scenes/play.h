@@ -1,6 +1,6 @@
 #include "Circle.h"
 
-#include "ofxScene.h"
+#include <ofxScenes.h>
 
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
@@ -9,8 +9,13 @@
 class Play : public ofxScene {
 
   public:
+    Play(): ofxScene("Play"){
+      selectedColor = ofColor(255,127,63);
+    }
     void setup();
     void update();
+    void updateEnter();
+    void updateExit();
     void draw();
 
     void keyPressed(int key);

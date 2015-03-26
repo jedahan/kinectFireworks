@@ -59,6 +59,20 @@ void Play::update() {
   updateFireworks();
 }
 
+void Play::updateEnter(){
+  ofLogNotice("Play") << "update enter start" << endl;
+  update();
+  finishedEntering();
+  ofLogNotice("Play") << "update enter done" << endl;
+}
+
+void Play::updateExit(){
+  ofLogNotice("Play") << "update exit start" << endl;
+  update();
+  finishedExiting();
+  ofLogNotice("Play") << "update exit done" << endl;
+}
+
 void Play::updateTrail() {
   trail.addVertex(ofGetMouseX(), ofGetMouseY());
 

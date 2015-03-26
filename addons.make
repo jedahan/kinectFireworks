@@ -1,5 +1,4 @@
 ofxKinect
 ofxKinectFeatures
 ofxOpenCv
-ofxSceneManager
-ofxTween
+ofxScenes

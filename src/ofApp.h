@@ -1,11 +1,9 @@
 #pragma once
 #include "ofMain.h"
 
-#include "ofxSceneManager.h"
+#include "ofxScenes.h"
 
-#include "scenes/play.h"
-
-class ofApp : public ofBaseApp {
+class ofApp : public ofxSceneManagerApp {
 
   public:
     void setup();
@@ -13,4 +11,5 @@ class ofApp : public ofBaseApp {
     void draw();
 
     ofxSceneManager sceneManager;
+    int lastScene;
 };
