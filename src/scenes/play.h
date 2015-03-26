@@ -9,7 +9,7 @@
 class Play : public ofxScene {
 
   public:
-    Play(): ofxScene("Play"){
+    Play() : ofxScene("Play") {
       selectedColor = ofColor(255,127,63);
     }
     void setup();

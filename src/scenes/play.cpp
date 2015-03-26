@@ -5,7 +5,6 @@
 
 void Play::setup() {
   ofEnableSmoothing();
-  ofBackground(0);
   ofGetWindowPtr()->setWindowTitle("fireworks");
   startTime = endTime = -1;
 
@@ -19,6 +18,7 @@ void Play::setup() {
   highlight.setAnchorPercent(0.5,0.5);
   setupCircles();
   setupKinect();
+  ofLogNotice("Play") << "setup complete" << ofToString(selectedColor) << endl;
 }
 
 void Play::setupCircles() {

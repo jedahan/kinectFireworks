@@ -4,14 +4,15 @@
 
 void ofApp::setup(){
   ofSetVerticalSync(true);
-  ofBackground(0);
+  ofBackground(0,0,0);
 
-  sceneManager.addScene(new Play());
-  // setup all the scenes immediately instead of on the fly
-  sceneManager.setup(true);
+  sceneManager.add(new Play());
+  sceneManager.setup();
+
+  ofSetLogLevel("ofxSceneManagerApp", OF_LOG_VERBOSE);
 
   // transition to the first scene immediately
-  sceneManager.goToScene("Play", true);
+  sceneManager.gotoScene("Play", true);
 
   // for keeping track of the previous scene
   lastScene = sceneManager.getCurrentSceneIndex();
@@ -26,5 +27,5 @@ void ofApp::update() {
 
 void ofApp::draw() {
   // because we setSceneManager, this happens magically
-  ofDrawBitmapStringHighlight("#" + sceneManager.getCurrentSceneIndex() + ": " + sceneManager.getCurrentSceneName());
+  ofDrawBitmapStringHighlight("#" + ofToString(sceneManager.getCurrentSceneIndex()) + ": " + sceneManager.getCurrentSceneName(), 100, 100);
 }
