@@ -13,24 +13,21 @@ For BGC Interface Experience
 ### interstitial
 
   "Congratulations, you have successfully calibrated the device"
- 
+
   "You will be designing a fireworks show around a set of commands to complete"
 
   "Hover over 'next' to continue"
 
 ## instruction screen
- 
+
    * Background black
    * Color pallete near bottom
    * Video with possible hand gestures
-   
+
    * Gestures
      * hover to choose color
 
    * Swipe in any direction to shoot firework
-
-   * Voice Commands
-     * yelling the color changes it
 
    "Perform the following actions"
 
@@ -44,21 +41,16 @@ For BGC Interface Experience
 ### interstitial
 
   "Congrats, now time to make your own show!"
-   
+
 ## play screen
 
   Do the same as the instruction screen but no instructions
 
 # Feature priority
 
-  - Hand tracking via kinect
-  - Creation of 'fireworks' near moving hand
-  - Choosing items by hovering
-  - One hand gesture recognition
   - Video playback
   - Two hand gesture recognition
   - Show recording
-  - Voice recognition
 
 # Screen priority
 
