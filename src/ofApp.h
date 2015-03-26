@@ -9,6 +9,7 @@ class ofApp : public ofxSceneManagerApp {
   public:
     void setup();
     void start(int &args);
+    void interstitial(int &args);
     void update();
     void draw();
     void keyPressed(int key);

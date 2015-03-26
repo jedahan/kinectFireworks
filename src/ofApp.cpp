@@ -20,15 +20,22 @@ void ofApp::setup(){
   // transition to the first scene
   // we use a timer because there seems to be a race condition
   // probably involving setup() not being done yet
-  timer.setup(10);
+  timer.setup(1000);
   timer.start(false);
-  ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::start);
+  ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::interstitial);
 }
 
 void ofApp::start(int &args) {
   sceneManager.gotoScene("Play", true);
 }
 
+void ofApp::interstitial(int &args) {
+  ofRemoveListener(timer.TIMER_COMPLETE, this, &ofApp::interstitial);
+  timer.stop();
+  timer.setup(3000);
+  timer.start(false);
+  ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::start);
+}
 void ofApp::update() {
   timer.update();
   // with setSceneManager(&sceneManager), sceneManager.getScene().update() will automagically be run
@@ -37,6 +44,9 @@ void ofApp::update() {
 void ofApp::draw() {
   // with setSceneManager(&sceneManager), sceneManager.getScene().draw() will automagically be run
   ofDrawBitmapStringHighlight("#" + ofToString(sceneManager.getCurrentSceneIndex()) + ": " + sceneManager.getCurrentSceneName(), 100, 100);
+  if(timer.bIsRunning){
+    ofDrawBitmapStringHighlight(" TIMER IS " + ofToString(timer.getNormalizedProgress()), 10, 10);
+  }
 }
 
 void ofApp::keyPressed(int key) {
