@@ -4,7 +4,7 @@
 #include "ofxScenes.h"
 #include "ofxSimpleTimer.h"
 
-class ofApp : public ofxSceneManagerApp {
+class ofApp : public ofxScenesApp {
 
   public:
     void setup();
