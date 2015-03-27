@@ -9,19 +9,13 @@ For BGC Interface Experience
   * [ofxScenes](https://github.com/jedahan/ofxScenes)
   * [ofxSimpleTimer](https://github.com//ofxSimpleTimer)
 
-## welcome screen
+## welcome
 
   Background shows shooting fireworks
 
-  Text says **Welcome to Kinect Fireworks! Please stand in the panel marked on the floor, then hold your hand in from of the screen to register with the kinect**
+  Text says **Welcome to Kinect Fireworks! Please stand in the panel marked on the floor, then hold your hand in front of you**
 
   Video shows someone performing the described action
-
-### interstitial
-
-  "Congratulations, you have successfully calibrated the device"
-
-  "You will be designing a fireworks show around a set of commands to complete"
 
   "Hover over 'next' to continue"
 
