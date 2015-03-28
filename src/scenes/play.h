@@ -52,7 +52,7 @@ class Play : public ofxScene {
 
       if(trail.size() > ofGetFrameRate() / 2) {
         ofPolyline tmp;
-        for( int i=1; i<trail.size(); i++ ){
+        for(unsigned int i=1; i<trail.size(); i++ ){
           tmp.addVertex(trail[i]);
         }
         trail = tmp;
@@ -68,7 +68,7 @@ class Play : public ofxScene {
     }
 
     void updateFireworks() {
-      for(int i=0; i< fireworks.size(); i++) {
+      for(unsigned int i=0; i< fireworks.size(); i++) {
         for(int j=0; j<fireworks[i].getNumVertices(); j++){
           fireworks[i].getVertices()[j] += ofPoint(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
         }
@@ -92,7 +92,7 @@ class Play : public ofxScene {
 
     void explode(int x0, int y0, int x1, int y1){
       ofMesh firework;
-      for(int i=0; i<100; i++){
+      for(unsigned int i=0; i<100; i++){
         firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
         firework.addColor(ofColor(selectedColor));
       }
@@ -100,7 +100,7 @@ class Play : public ofxScene {
     }
 
     void windowResized(int w, int h){
-      for(int i=0; i<circles.size(); i++){
+      for(unsigned int i=0; i<circles.size(); i++){
         circles[i].x = (i+2)*w/6;
         circles[i].y = h/2;
       }

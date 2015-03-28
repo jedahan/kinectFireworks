@@ -40,7 +40,7 @@ void ofApp::setup(){
 }
 
 void ofApp::start(int &args){
-  sceneManager.nextScene(true);
+  sceneManager.gotoScene("Welcome");
   ofAddListener(((Welcome *) (sceneManager.getScene("Welcome")))->NEXTSCENE, this, &ofApp::nextScene);
 }
 
