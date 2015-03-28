@@ -14,9 +14,9 @@ class Play : public ofxScene {
       int h = ofGetViewportHeight();
 
       Circle a, b, c;
-      a.setup(ofColor(0,255,255), 2*w/6, h/2, 100, 1500);
-      b.setup(ofColor(255,0,255), 3*w/6, h/2, 100, 1500);
-      c.setup(ofColor(255,255,0), 4*w/6, h/2, 100, 1500);
+      a.setup(ofColor(0,255,255), 2*w/6, h/2, 100, 1.5);
+      b.setup(ofColor(255,0,255), 3*w/6, h/2, 100, 1.5);
+      c.setup(ofColor(255,255,0), 4*w/6, h/2, 100, 1.5);
       circles.push_back(a);
       circles.push_back(b);
       circles.push_back(c);
