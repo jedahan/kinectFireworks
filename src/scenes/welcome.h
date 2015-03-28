@@ -12,7 +12,7 @@ class Welcome : public ofxScene {
     }
 
     void setup() {
-       circle.setup(ofColor(255), ofGetWidth()/2, ofGetHeight()/2, 20, 2000);
+       circle.setup(ofColor(127), ofGetWidth()/2, ofGetHeight()/2, 200, 2.0);
        ofAddListener(circle.SELECTED, this, &Welcome::nextScene);
     }
 

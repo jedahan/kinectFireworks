@@ -8,13 +8,16 @@ class Circle {
     int x;
     int y;
     int r;
-    int timeout;
+    float timeout;
+
+    float startTime, endTime;
+    float percent;
 
     string name;
     ofColor c;
     Circle(){}
 
-    void setup(ofColor _c, int _x, int _y, int _r, int _timeout) {
+    void setup(ofColor _c, int _x, int _y, int _r, float _timeout) {
       c = _c;
       x = _x;
       y = _y;
@@ -24,30 +27,32 @@ class Circle {
       startTime = endTime = -1;
       line.setStrokeWidth(1);
       line.setCircleResolution(60);
+      ofAddListener(ofEvents().mouseMoved, this, &Circle::mouseMoved);
     }
 
     ofPath line;
     ofEvent<void> SELECTED;
 
     void update() {
-      percent = (ofGetElapsedTimeMillis() - startTime)/timeout;
-      if(endTime > 0 && ofGetElapsedTimeMillis() >= endTime) {
-        ofNotifyEvent(SELECTED); // stole off of ofxSimpleTimer
-        startTime = endTime = -1;
-      }
-      line.clear();
-      if(percent > 360/line.getCircleResolution()/100){
-        line.moveTo(x,y);
-        line.arc(x,y,r,r,270,270+360*percent);
+      if(startTime > 0){
+        percent = (ofGetElapsedTimef() - startTime)/timeout;
+        if(percent >= 1.0){
+          startTime = endTime = -1;
+          ofNotifyEvent(SELECTED);
+        }
+        line.clear();
+        if(percent > 360/line.getCircleResolution()/100.0){
+          line.moveTo(x,y);
+          line.arc(x,y,r+20,r+20,270,270+360*percent);
+        }
       }
     }
 
     void draw() {
-      if(endTime>0){
+      if(startTime > 0){
         ofSetColor(255);
         line.draw();
       }
-
       ofSetColor(c);
       ofDrawCircle(x,y,r);
     }
@@ -58,16 +63,13 @@ class Circle {
       return dx*dx + dy*dy <= r*r;
     }
 
-    int startTime, endTime;
-    float percent;
-
-    void mouseMoved(int x, int y){
-      if(hit(x,y) && startTime < 0) {
-        startTime = ofGetElapsedTimeMillis();
-        endTime = startTime + timeout;
-      }
-      if(! hit(x,y) && endTime > 0){
+    void mouseMoved(ofMouseEventArgs& mouse){
+      if(startTime > 0 && !(hit(mouse.x,mouse.y))){
         startTime = endTime = -1;
+      }
+      if(startTime < 0 && hit(mouse.x,mouse.y)) {
+        startTime = ofGetElapsedTimef();
+        endTime = startTime + timeout;
       }
     }
 };

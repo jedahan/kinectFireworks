@@ -90,12 +90,6 @@ class Play : public ofxScene {
      }
     }
 
-    void mouseMoved(int x, int y){
-      for(Circle circle : circles){
-        circle.mouseMoved(x,y);
-      }
-    }
-
     void explode(int x0, int y0, int x1, int y1){
       ofMesh firework;
       for(int i=0; i<100; i++){

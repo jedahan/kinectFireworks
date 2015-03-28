@@ -1,5 +1,7 @@
 #pragma once
 #include "ofMain.h"
+#include "ofEvents.h"
+#include "ofEventUtils.h"
 
 #include "ofxScenes.h"
 #include "ofxSimpleTimer.h"

@@ -117,7 +117,10 @@ void ofApp::updateKinect() {
       // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
       ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
       ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
-      mouseMoved(ofGetAppPtr()->mouseX,ofGetAppPtr()->mouseY);
+      static ofMouseEventArgs mouseEventArgs;
+      mouseEventArgs.x = ofGetAppPtr()->mouseX;
+      mouseEventArgs.y = ofGetAppPtr()->mouseY;
+      ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
     }
   }
 }
