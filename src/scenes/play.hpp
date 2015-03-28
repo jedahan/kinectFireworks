@@ -1,10 +1,12 @@
 #include "../Circle.h"
 
+#pragma once
 #include <ofxScenes.h>
 
 class Play : public ofxScene {
 
   public:
+
     Play() : ofxScene("Play") {
       selectedColor = ofColor(255,127,63);
     }
@@ -22,7 +24,6 @@ class Play : public ofxScene {
       circles.push_back(c);
 
       selectedColor = a.c;
-      ofLogNotice("Play") << "setup complete " << ofToString(selectedColor) << endl;
     }
 
     void update() {
@@ -34,17 +35,13 @@ class Play : public ofxScene {
     }
 
     void updateEnter(){
-      ofLogNotice("Play") << "update enter start" << endl;
       update();
       finishedEntering();
-      ofLogNotice("Play") << "update enter done" << endl;
     }
 
     void updateExit(){
-      ofLogNotice("Play") << "update exit start" << endl;
       update();
       finishedExiting();
-      ofLogNotice("Play") << "update exit done" << endl;
     }
 
     void updateTrail() {
@@ -59,7 +56,7 @@ class Play : public ofxScene {
         float x0 = trail[0].x, y0 = trail[0].y;
         float x1 = trail[trail.size()-1].x, y1 = trail[trail.size()-1].y;
 
-        if(ofDist(x0,y0,x1,y1) > ofGetWidth()/6) {
+        if(ofDist(x0,y0,x1,y1) > ofGetWidth()/4) {
           explode(x0,y0,x1,y1);
           trail.clear();
         }
@@ -86,7 +83,6 @@ class Play : public ofxScene {
     void drawFireworks() {
      for(ofMesh firework : fireworks){
        firework.drawVertices();
-       firework.drawWireframe();
      }
     }
 
@@ -96,6 +92,7 @@ class Play : public ofxScene {
         firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
         firework.addColor(ofColor(selectedColor));
       }
+      // TODO: add a timer to remove a firework in a second or two...
       fireworks.push_back(firework);
     }
 

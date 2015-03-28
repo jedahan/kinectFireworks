@@ -1,12 +1,15 @@
 #include "ofApp.h"
-#include "ofEventUtils.h"
 
-#include "Circle.h"
+#include "ofEventUtils.h"
+#include "ofEvents.h"
+
+#include "../Circle.h"
 
 class Welcome : public ofxScene {
 
   public:
     Circle circle;
+    ofEvent<void> NEXTSCENE;
 
     Welcome() : ofxScene("Welcome") {
     }
@@ -20,14 +23,12 @@ class Welcome : public ofxScene {
       circle.update();
     }
 
-    ofEvent<void> NEXTSCENE;
+    void draw() {
+      circle.draw();
+    }
 
     void nextScene() {
       ofNotifyEvent(NEXTSCENE);
-    }
-
-    void draw() {
-      circle.draw();
     }
 
     void windowResized(int w, int h) {

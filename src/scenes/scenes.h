@@ -1,3 +1,3 @@
 #pragma once
-#include "welcome.h"
-#include "play.h"
+#include "welcome.hpp"
+#include "play.hpp"
