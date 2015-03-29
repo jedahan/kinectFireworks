@@ -9,8 +9,6 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 
-#include "scenes/scenes.hpp"
-
 class ofApp : public ofxScenesApp {
 
   public:

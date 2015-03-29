@@ -1,4 +1,5 @@
 #include "ofApp.hpp"
+#include "scenes/scenes.hpp"
 
 void ofApp::setup(){
   ofGetWindowPtr()->setWindowTitle("fireworks");

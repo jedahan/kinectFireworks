@@ -1,9 +1,9 @@
 #pragma once
-#include "ofMain.h"
-#include "ofxScenes.h"
-#include "ofEventUtils.h"
-#include "ofEvents.h"
+#include <ofxScenes.h>
+#include <ofEventUtils.h>
+#include <ofEvents.h>
 
+#include "../ofApp.hpp"
 #include "../Circle.h"
 
 class Welcome : public ofxScene {
@@ -11,8 +11,10 @@ class Welcome : public ofxScene {
   public:
     Circle circle;
     ofEvent<void> NEXTSCENE;
+    ofApp* app;
 
     Welcome() : ofxScene("Welcome") {
+      app = (ofApp*) ofxGetAppPtr();
     }
 
     void setup() {
@@ -26,7 +28,7 @@ class Welcome : public ofxScene {
 
     void draw() {
       circle.draw();
-      ofxGetAppPtr()->drawStringCenter("Please hold up your hand to start");
+      app->drawStringCenter("Please hold up your hand to start");
     }
 
     void nextScene() {
