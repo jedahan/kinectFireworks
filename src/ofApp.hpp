@@ -9,7 +9,7 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 
-#include "scenes/scenes.h"
+#include "scenes/scenes.hpp"
 
 class ofApp : public ofxScenesApp {
 
@@ -22,6 +22,7 @@ class ofApp : public ofxScenesApp {
     void draw();
     void keyPressed(int key);
     void exit();
+    void drawStringCenter(string text);
 
     ofxSceneManager sceneManager;
     ofxSimpleTimer timer;
@@ -41,6 +42,8 @@ class ofApp : public ofxScenesApp {
 
     ofImage cursor;
     ofImage highlight;
+
+    ofTrueTypeFont font;
 
     int nearThreshold;
     int farThreshold;

@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "ofApp.hpp"
 
 void ofApp::setup(){
   ofGetWindowPtr()->setWindowTitle("fireworks");
@@ -32,11 +32,17 @@ void ofApp::setup(){
   ofGetAppPtr()->mouseX = ofGetWidth()/2;
   ofGetAppPtr()->mouseY = ofGetHeight()/2;
 
+  font.load("helveticaneue.ttf", 30);
+
   cursor.load("cursor.png");
   cursor.setAnchorPercent(0.5,0.5);
   highlight.load("cursor.png");
   highlight.resize(cursor.getWidth()*1.1,cursor.getHeight()*1.15);
   highlight.setAnchorPercent(0.5,0.5);
+}
+
+void ofApp::drawStringCenter(string text){
+  font.drawString(text, (ofGetWidth()-font.stringWidth(text))/2, font.stringHeight(text)*2);
 }
 
 void ofApp::start(int &args){

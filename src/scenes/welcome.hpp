@@ -1,5 +1,6 @@
-#include "ofApp.h"
-
+#pragma once
+#include "ofMain.h"
+#include "ofxScenes.h"
 #include "ofEventUtils.h"
 #include "ofEvents.h"
 
@@ -25,6 +26,7 @@ class Welcome : public ofxScene {
 
     void draw() {
       circle.draw();
+      ofxGetAppPtr()->drawStringCenter("Please hold up your hand to start");
     }
 
     void nextScene() {
