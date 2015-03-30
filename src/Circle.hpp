@@ -13,15 +13,18 @@ class Circle {
     float startTime, endTime;
     float percent;
 
+    bool enabled;
+
     string name;
     ofColor c;
     Circle(){}
 
-    void setup(ofColor _c, int _x, int _y, int _r, float _timeout) {
+    void setup(ofColor _c, int _x, int _y, int _r, float _timeout, bool _enabled=true) {
       c = _c;
       x = _x;
       y = _y;
       r = _r;
+      enabled = _enabled;
       percent = 0.0;
       timeout = _timeout;
       startTime = endTime = -1;
@@ -31,14 +34,14 @@ class Circle {
     }
 
     ofPath line;
-    ofEvent<void> SELECTED;
+    ofEvent<ofColor> SELECTED;
 
     void update() {
       if(startTime > 0){
         percent = (ofGetElapsedTimef() - startTime)/timeout;
         if(percent >= 1.0){
           startTime = endTime = -1;
-          ofNotifyEvent(SELECTED);
+          ofNotifyEvent(SELECTED, c, this);
         }
         line.clear();
         if(percent > 360/line.getCircleResolution()/100.0){
@@ -64,12 +67,16 @@ class Circle {
     }
 
     void mouseMoved(ofMouseEventArgs& mouse){
-      if(startTime > 0 && !(hit(mouse.x,mouse.y))){
-        startTime = endTime = -1;
-      }
-      if(startTime < 0 && hit(mouse.x,mouse.y)) {
-        startTime = ofGetElapsedTimef();
-        endTime = startTime + timeout;
+      if(enabled){
+        if(startTime > 0 && !(hit(mouse.x,mouse.y))){
+          startTime = endTime = -1;
+          cout << "unhit" << endl;
+        }
+        if(startTime < 0 && hit(mouse.x,mouse.y)) {
+          startTime = ofGetElapsedTimef();
+          endTime = startTime + timeout;
+          cout << "hit!" << endl;
+        }
       }
     }
 };

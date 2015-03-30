@@ -1,36 +1,45 @@
-#include "../Circle.h"
-
 #pragma once
 #include <ofxScenes.h>
+#include <ofEventUtils.h>
+#include <ofEvents.h>
+
+#include "../ofApp.hpp"
+#include "../Circle.hpp"
 
 class Play : public ofxScene {
 
   public:
+    ofApp * app;
+    ofPolyline trail;
+    vector<ofMesh> fireworks;
+    Circle a, b, c;
 
     Play() : ofxScene("Play") {
-      selectedColor = ofColor(255,127,63);
+      app = (ofApp*) ofxGetAppPtr();
+      app->selectedColor = ofColor(255,127,63);
     }
 
     void setup() {
       int w = ofGetViewportWidth();
       int h = ofGetViewportHeight();
 
-      Circle a, b, c;
       a.setup(ofColor(0,255,255), 2*w/6, h/2, 100, 1.5);
+      ofAddListener(a.SELECTED, this, &Play::selectColor);
       b.setup(ofColor(255,0,255), 3*w/6, h/2, 100, 1.5);
+      ofAddListener(b.SELECTED, this, &Play::selectColor);
       c.setup(ofColor(255,255,0), 4*w/6, h/2, 100, 1.5);
-      circles.push_back(a);
-      circles.push_back(b);
-      circles.push_back(c);
+      ofAddListener(c.SELECTED, this, &Play::selectColor);
+    }
 
-      selectedColor = a.c;
+    void selectColor(ofColor &c){
+      app->selectedColor = c;
     }
 
     void update() {
       updateTrail();
-      for(Circle circle : circles){
-        circle.update();
-      }
+      a.update();
+      b.update();
+      c.update();
       updateFireworks();
     }
 
@@ -65,20 +74,18 @@ class Play : public ofxScene {
     }
 
     void updateFireworks() {
-      for(unsigned int i=0; i< fireworks.size(); i++) {
-        for(int j=0; j<fireworks[i].getNumVertices(); j++){
-          fireworks[i].getVertices()[j] += ofPoint(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
-        }
-      }
+      for(auto & firework : fireworks)
+        for(auto & vertex : firework.getVertices())
+          vertex += ofPoint(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
     }
 
     void draw() {
-      for(Circle circle : circles){
-        circle.draw();
-      }
+      a.draw();
+      b.draw();
+      c.draw();
       drawFireworks();
       trail.draw();
-   }
+    }
 
     void drawFireworks() {
      for(ofMesh firework : fireworks){
@@ -90,25 +97,11 @@ class Play : public ofxScene {
       ofMesh firework;
       for(unsigned int i=0; i<100; i++){
         firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
-        firework.addColor(ofColor(selectedColor));
+        firework.addColor(ofColor(app->selectedColor));
       }
       // TODO: add a timer to remove a firework in a second or two...
+      fireworks.clear();
       fireworks.push_back(firework);
     }
 
-    void windowResized(int w, int h){
-      for(unsigned int i=0; i<circles.size(); i++){
-        circles[i].x = (i+2)*w/6;
-        circles[i].y = h/2;
-      }
-    }
-
-    ofPolyline trail;
-    vector<Circle> circles;
-
-    ofColor selectedColor;
-    ofPath line;
-    vector<ofMesh> fireworks;
-
-    bool select;
 };

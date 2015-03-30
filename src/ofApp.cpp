@@ -8,12 +8,15 @@ void ofApp::setup(){
   ofSetVerticalSync(true);
   ofBackground(0,0,0);
   debug = false;
+  handFound = debug;
 
   setupKinect();
 
   sceneManager.add(new Welcome());
   sceneManager.add(new Play());
   sceneManager.setup();
+
+  selectedColor = ofColor(127,188,89);
 
   ofSetLogLevel("ofxSceneManagerApp", OF_LOG_VERBOSE);
 
@@ -48,7 +51,6 @@ void ofApp::drawStringCenter(string text){
 
 void ofApp::start(int &args){
   sceneManager.gotoScene("Welcome");
-  ofAddListener(((Welcome *) (sceneManager.getScene("Welcome")))->NEXTSCENE, this, &ofApp::nextScene);
 }
 
 void ofApp::nextScene() {
@@ -62,11 +64,12 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
-  ofSetColor(255,255,255);
-  highlight.draw(mouseX, mouseY);
-//  ofSetColor(Play::selectedColor);
-  ofSetColor(255,0,255);
-  cursor.draw(mouseX,mouseY);
+  if(handFound){
+    ofSetColor(255,255,255);
+    highlight.draw(mouseX, mouseY);
+    ofSetColor(selectedColor);
+    cursor.draw(mouseX,mouseY);
+  }
 
   // with setSceneManager(&sceneManager), sceneManager.getScene().draw() will automagically be run
   if(debug){
@@ -116,6 +119,7 @@ void ofApp::updateKinect() {
     contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
 
     if(contourFinder.nBlobs > 0) {
+      handFound = true;
       const float xPercent = ofMap(contourFinder.blobs[0].centroid.x, kinect.width, 0, -1.0, 1.0);
       const float yPercent = ofMap(contourFinder.blobs[0].centroid.y, 0, kinect.height,-1.0, 1.0);
       const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
@@ -173,6 +177,7 @@ void ofApp::keyPressed (int key) {
   switch (key) {
     case 'd':
       debug = !debug;
+      handFound = debug;
       break;
 
     case '>':

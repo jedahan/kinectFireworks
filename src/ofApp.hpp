@@ -25,6 +25,8 @@ class ofApp : public ofxScenesApp {
     ofxSceneManager sceneManager;
     ofxSimpleTimer timer;
     int lastScene;
+    bool handFound;
+    ofColor selectedColor;
 
     void setupKinect();
     void updateKinect();

@@ -4,35 +4,58 @@
 #include <ofEvents.h>
 
 #include "../ofApp.hpp"
-#include "../Circle.h"
+#include "../Circle.hpp"
 
 class Welcome : public ofxScene {
 
   public:
     Circle circle;
-    ofEvent<void> NEXTSCENE;
     ofApp* app;
+    unsigned int handSeconds;
 
     Welcome() : ofxScene("Welcome") {
       app = (ofApp*) ofxGetAppPtr();
+      handSeconds = 0;
     }
 
     void setup() {
-       circle.setup(ofColor(127), ofGetWidth()/2, ofGetHeight()/2, 200, 2.0);
+       circle.setup(ofColor(127), ofGetWidth()/2, ofGetHeight()/2, 200, 2.0, false);
        ofAddListener(circle.SELECTED, this, &Welcome::nextScene);
     }
 
     void update() {
       circle.update();
+      if(app->handFound){
+        handSeconds++;
+      } else {
+        handSeconds = 0;
+      }
+      if(handSeconds > 2 * ofGetFrameRate()){
+        circle.enabled = true;
+      }
+    }
+
+    void updateExit(){
+      update();
+      finishedExiting();
+    }
+
+    void updateEnter(){
+      update();
+      finishedEntering();
     }
 
     void draw() {
-      circle.draw();
-      app->drawStringCenter("Please hold up your hand to start");
+      if(circle.enabled){
+        app->drawStringCenter("Great!, now hold it over the circle to continue");
+        circle.draw();
+      } else {
+        app->drawStringCenter("Please hold up your hand to start");
+      }
     }
 
-    void nextScene() {
-      ofNotifyEvent(NEXTSCENE);
+    void nextScene(ofColor &c) {
+      app->nextScene();
     }
 
     void windowResized(int w, int h) {
