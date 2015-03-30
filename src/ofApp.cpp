@@ -13,10 +13,12 @@ void ofApp::setup(){
   setupKinect();
 
   sceneManager.add(new Welcome());
+  sceneManager.add(new Colors());
+  sceneManager.add(new Firework());
   sceneManager.add(new Play());
   sceneManager.setup();
 
-  selectedColor = ofColor(127,188,89);
+  selectedColor = ofColor(127);
 
   ofSetLogLevel("ofxSceneManagerApp", OF_LOG_VERBOSE);
 
@@ -49,11 +51,11 @@ void ofApp::drawStringCenter(string text){
   font.drawString(text, (ofGetWidth()-font.stringWidth(text))/2, font.stringHeight(text)*2);
 }
 
-void ofApp::start(int &args){
-  sceneManager.gotoScene("Welcome");
+void ofApp::start(int &i){
+  sceneManager.gotoScene(sceneManager.getSceneIndex("Welcome"), true);
 }
 
-void ofApp::nextScene() {
+void ofApp::nextScene(){
   sceneManager.nextScene(true);
 }
 

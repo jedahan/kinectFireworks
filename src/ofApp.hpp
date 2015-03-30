@@ -2,6 +2,7 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "ofEventUtils.h"
+#include "Circle.hpp"
 
 #include "ofxScenes.h"
 #include "ofxSimpleTimer.h"
@@ -33,6 +34,7 @@ class ofApp : public ofxScenesApp {
     void drawKinect();
 
     ofxKinect kinect;
+
 
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image

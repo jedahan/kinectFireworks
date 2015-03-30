@@ -41,7 +41,7 @@ class Circle {
         percent = (ofGetElapsedTimef() - startTime)/timeout;
         if(percent >= 1.0){
           startTime = endTime = -1;
-          ofNotifyEvent(SELECTED, c, this);
+          ofNotifyEvent(SELECTED, c);
         }
         line.clear();
         if(percent > 360/line.getCircleResolution()/100.0){
@@ -66,16 +66,14 @@ class Circle {
       return dx*dx + dy*dy <= r*r;
     }
 
-    void mouseMoved(ofMouseEventArgs& mouse){
+    void mouseMoved(ofMouseEventArgs & mouse){
       if(enabled){
         if(startTime > 0 && !(hit(mouse.x,mouse.y))){
           startTime = endTime = -1;
-          cout << "unhit" << endl;
         }
         if(startTime < 0 && hit(mouse.x,mouse.y)) {
           startTime = ofGetElapsedTimef();
           endTime = startTime + timeout;
-          cout << "hit!" << endl;
         }
       }
     }

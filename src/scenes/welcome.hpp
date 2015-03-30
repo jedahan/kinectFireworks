@@ -19,8 +19,13 @@ class Welcome : public ofxScene {
     }
 
     void setup() {
-       circle.setup(ofColor(127), ofGetWidth()/2, ofGetHeight()/2, 200, 2.0, false);
+       circle.setup(ofColor(127, 188, 97), ofGetWidth()/2, ofGetHeight()/2, 200, 2.0, false);
        ofAddListener(circle.SELECTED, this, &Welcome::nextScene);
+    }
+
+    void nextScene(ofColor &c) {
+      app->selectedColor = c;
+      app->nextScene();
     }
 
     void update() {
@@ -52,10 +57,6 @@ class Welcome : public ofxScene {
       } else {
         app->drawStringCenter("Please hold up your hand to start");
       }
-    }
-
-    void nextScene(ofColor &c) {
-      app->nextScene();
     }
 
     void windowResized(int w, int h) {
