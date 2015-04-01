@@ -40,7 +40,7 @@ class Colors : public ofxScene {
     }
 
     void nextScene(int &i){
-      app->getSceneManager()->nextScene();
+      app->getSceneManager()->nextScene(true);
     }
 
     void setColor(Circle &c) {
@@ -66,7 +66,7 @@ class Colors : public ofxScene {
       a.draw();
       b.draw();
       c.draw();
-      if(!timer.bIsRunning){
+      if(chosenColors.size()<3){
         app->drawStringCenter("Now choose each of the colors ("+ofToString(3-chosenColors.size())+" left)");
       } else {
         app->drawStringCenter("Woohoo! Let's move on...");

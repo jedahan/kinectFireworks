@@ -13,28 +13,29 @@
 class ofApp : public ofxScenesApp {
 
   public:
-    void nextScene();
     void setup();
     void start(int &args);
-    void interstitial(int &args);
     void update();
     void draw();
     void keyPressed(int key);
     void exit();
     void drawStringCenter(string text);
+    void appTimedout(int &i);
+    void handTimedout(int &i);
+    void resetHandTimedout(ofMouseEventArgs &e);
 
     ofxSceneManager sceneManager;
     ofxSimpleTimer timer;
     int lastScene;
     bool handFound;
     ofColor selectedColor;
+    ofxSimpleTimer handTimeout;
+    ofxSimpleTimer appTimeout;
 
     void setupKinect();
-    void updateKinect();
     void drawKinect();
 
     ofxKinect kinect;
-
 
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
@@ -51,9 +52,6 @@ class ofApp : public ofxScenesApp {
     int farThreshold;
 
     int angle;
-
-    float startTime;
-    float endTime;
 
     bool debug;
 };

@@ -11,11 +11,9 @@ class Welcome : public ofxScene {
   public:
     Circle circle;
     ofApp* app;
-    unsigned int handSeconds;
 
     Welcome() : ofxScene("Welcome") {
       app = (ofApp*) ofxGetAppPtr();
-      handSeconds = 0;
     }
 
     void setup() {
@@ -25,19 +23,11 @@ class Welcome : public ofxScene {
 
     void nextScene(Circle &c) {
       app->selectedColor = c.c;
-      app->nextScene();
+      app->getSceneManager()->nextScene(true);
     }
 
     void update() {
       circle.update();
-      if(app->handFound){
-        handSeconds++;
-      } else {
-        handSeconds = 0;
-      }
-      if(handSeconds > 2 * ofGetFrameRate()){
-        circle.enabled = true;
-      }
     }
 
     void updateExit(){
@@ -51,12 +41,8 @@ class Welcome : public ofxScene {
     }
 
     void draw() {
-      if(circle.enabled){
-        app->drawStringCenter("Great!, now hold it over the circle to continue");
-        circle.draw();
-      } else {
-        app->drawStringCenter("Please hold up your hand to start");
-      }
+      app->drawStringCenter("Please hold out your hand, and hover over the circle to start");
+      circle.draw();
     }
 
     void windowResized(int w, int h) {

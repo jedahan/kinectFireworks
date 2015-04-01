@@ -4,7 +4,7 @@
 void ofApp::setup(){
   ofGetWindowPtr()->setWindowTitle("fireworks");
   ofEnableSmoothing();
-  ofSetCircleResolution(30);
+  ofSetCircleResolution(60);
   ofSetVerticalSync(true);
   ofBackground(0,0,0);
   debug = false;
@@ -33,7 +33,17 @@ void ofApp::setup(){
   timer.start(false);
   ofAddListener(timer.TIMER_COMPLETE, this, &ofApp::start);
 
-  startTime = endTime = -1;
+  // this app timeout will reset after a minute
+  appTimeout.setup(60*1000);
+  appTimeout.start(false);
+  ofAddListener(appTimeout.TIMER_COMPLETE, this, &ofApp::start);
+
+  // this hand timeout will hide the cursor if it hasn't moved in 5 seconds
+  handTimeout.setup(5000);
+  handTimeout.start(false);
+  ofAddListener(handTimeout.TIMER_COMPLETE, this, &ofApp::handTimedout);
+  // this listener will reset the hand listener if the mouse has moved
+  ofAddListener(ofEvents().mouseMoved, this, &ofApp::resetHandTimedout);
 
   ofGetAppPtr()->mouseX = ofGetWidth()/2;
   ofGetAppPtr()->mouseY = ofGetHeight()/2;
@@ -47,7 +57,16 @@ void ofApp::setup(){
   highlight.setAnchorPercent(0.5,0.5);
 }
 
+void ofApp::handTimedout(int &i){
+  handFound = false;
+}
+
+void ofApp::resetHandTimedout(ofMouseEventArgs &e){
+  handTimeout.reset();
+  handFound = true;
+}
 void ofApp::drawStringCenter(string text){
+  ofSetColor(ofColor(255,255,255));
   font.drawString(text, (ofGetWidth()-font.stringWidth(text))/2, font.stringHeight(text)*2);
 }
 
@@ -55,30 +74,60 @@ void ofApp::start(int &i){
   sceneManager.gotoScene(sceneManager.getSceneIndex("Welcome"), true);
 }
 
-void ofApp::nextScene(){
-  sceneManager.nextScene(true);
-}
-
+// the scene manager will handle scene.update()
 void ofApp::update() {
   timer.update();
-  updateKinect();
-  // with setSceneManager(&sceneManager), sceneManager.getScene().update() will automagically be run
+
+  kinect.update();
+  if(kinect.isFrameNew()) {
+    grayImage.setFromPixels(kinect.getDepthPixels());
+    grayThreshNear = grayImage;
+    grayThreshFar = grayImage;
+    grayThreshNear.threshold(nearThreshold, true);
+    grayThreshFar.threshold(farThreshold);
+    cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
+    grayImage.flagImageChanged();
+    contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
+
+    if(contourFinder.nBlobs > 0){
+      float blobx = contourFinder.blobs[0].centroid.x;
+      float bloby = contourFinder.blobs[0].centroid.y;
+
+      const float xPercent = ofMap(blobx, kinect.width, 0, -1.0, 1.0);
+      const float yPercent = ofMap(bloby, 0, kinect.height,-1.0, 1.0);
+
+      if(handFound){
+        const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
+        const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
+        // TODO: switch to ofxAnimatable if this fails hard
+        // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
+        ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
+        ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
+        static ofMouseEventArgs mouseEventArgs;
+        mouseEventArgs.x = ofGetAppPtr()->mouseX;
+        mouseEventArgs.y = ofGetAppPtr()->mouseY;
+        ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
+      } else {
+        if(-0.5 < xPercent < 0.5 && -0.5 < yPercent < 0.5) {
+          handFound = true;
+          handTimeout.start(false);
+        }
+     }
+    }
+  }
+
 }
 
+// the scene manager will handle scene.draw()
 void ofApp::draw() {
-  if(handFound){
+  if(handFound || debug){
     ofSetColor(255,255,255);
     highlight.draw(mouseX, mouseY);
     ofSetColor(selectedColor);
     cursor.draw(mouseX,mouseY);
   }
 
-  // with setSceneManager(&sceneManager), sceneManager.getScene().draw() will automagically be run
   if(debug){
-    ofDrawBitmapStringHighlight("#" + ofToString(sceneManager.getCurrentSceneIndex()) + ": " + sceneManager.getCurrentSceneName(), 100, 100);
-    if(timer.bIsRunning){
-      ofDrawBitmapStringHighlight(" TIMER IS " + ofToString(timer.getNormalizedProgress()), 10, 10);
-    }
     drawKinect();
   }
 }
@@ -106,38 +155,6 @@ void ofApp::setupKinect() {
   kinect.setCameraTiltAngle(angle);
   kinect.setLed(ofxKinect::LED_OFF);
 }
-
-
-void ofApp::updateKinect() {
-  kinect.update();
-  if(kinect.isFrameNew()) {
-    grayImage.setFromPixels(kinect.getDepthPixels());
-    grayThreshNear = grayImage;
-    grayThreshFar = grayImage;
-    grayThreshNear.threshold(nearThreshold, true);
-    grayThreshFar.threshold(farThreshold);
-    cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-    grayImage.flagImageChanged();
-    contourFinder.findContours(grayImage, 100, (kinect.width*kinect.height)/10, 1, false);
-
-    if(contourFinder.nBlobs > 0) {
-      handFound = true;
-      const float xPercent = ofMap(contourFinder.blobs[0].centroid.x, kinect.width, 0, -1.0, 1.0);
-      const float yPercent = ofMap(contourFinder.blobs[0].centroid.y, 0, kinect.height,-1.0, 1.0);
-      const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
-      const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
-      // TODO: switch to ofxAnimatable if this fails hard
-      // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
-      ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
-      ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
-      static ofMouseEventArgs mouseEventArgs;
-      mouseEventArgs.x = ofGetAppPtr()->mouseX;
-      mouseEventArgs.y = ofGetAppPtr()->mouseY;
-      ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
-    }
-  }
-}
-
 
 void ofApp::drawKinect() {
   ofSetColor(255, 255, 255);
@@ -232,3 +249,5 @@ void ofApp::keyPressed (int key) {
       break;
   }
 }
+
+

@@ -12,16 +12,26 @@ class Firework : public ofxScene {
     ofApp * app;
     ofPolyline trail;
     vector<ofMesh> fireworks;
+    int explode_count;
+    ofxSimpleTimer timer;
 
     Firework() : ofxScene("Firework") {
       app = (ofApp*) ofxGetAppPtr();
     }
 
     void setup() {
+      explode_count = 0;
+      timer.setup(2000);
+      ofAddListener(timer.TIMER_COMPLETE, this, &Firework::nextScene);
+    }
+
+    void nextScene(int &i){
+      app->getSceneManager()->nextScene(true);
     }
 
     void update() {
       updateTrail();
+      timer.update();
       updateFireworks();
     }
 
@@ -61,13 +71,32 @@ class Firework : public ofxScene {
     }
 
     void draw() {
-      app->drawStringCenter("Swipe your hand quickly");
+      switch(explode_count){
+        case 0:
+          app->drawStringCenter("Swipe your hand quickly");
+          break;
+        case 1:
+          app->drawStringCenter("coool, now swipe " + ofToString(4-explode_count) + " more times");
+          break;
+        case 2:
+          app->drawStringCenter("POW! I wanna see " + ofToString(4-explode_count) + " more fireworks!");
+          break;
+        case 3:
+          app->drawStringCenter("WOOHA! Just one more before we start the main show..");
+          break;
+        default:
+          app->drawStringCenter("Alright, time to play");
+          timer.start(false);
+          break;
+      }
+
       for(auto & firework : fireworks)
         firework.drawVertices();
       trail.draw();
     }
 
     void explode(int x0, int y0, int x1, int y1){
+      explode_count++;
       ofMesh firework;
       app->selectedColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
       for(unsigned int i=0; i<200; i++){
