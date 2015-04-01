@@ -15,11 +15,9 @@ class Firework : public ofxScene {
 
     Firework() : ofxScene("Firework") {
       app = (ofApp*) ofxGetAppPtr();
-      app->selectedColor = ofColor(255,127,63);
     }
 
     void setup() {
-      app->drawStringCenter("Swipe your hand quickly");
     }
 
     void update() {
@@ -54,7 +52,6 @@ class Firework : public ofxScene {
           trail.clear();
         }
       }
-
     }
 
     void updateFireworks() {
@@ -64,14 +61,10 @@ class Firework : public ofxScene {
     }
 
     void draw() {
-      drawFireworks();
+      app->drawStringCenter("Swipe your hand quickly");
+      for(auto & firework : fireworks)
+        firework.drawVertices();
       trail.draw();
-    }
-
-    void drawFireworks() {
-     for(ofMesh firework : fireworks){
-       firework.drawVertices();
-     }
     }
 
     void explode(int x0, int y0, int x1, int y1){
