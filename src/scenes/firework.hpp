@@ -46,7 +46,7 @@ class Firework : public ofxScene {
     }
 
     void updateTrail() {
-      trail.addVertex(ofGetMouseX(), ofGetMouseY());
+      trail.addVertex(app->mouseX, app->mouseY);
 
       if(trail.size() > ofGetFrameRate() / 2) {
         ofPolyline tmp;
@@ -92,6 +92,7 @@ class Firework : public ofxScene {
 
       for(auto & firework : fireworks)
         firework.drawVertices();
+
       trail.draw();
     }
 
