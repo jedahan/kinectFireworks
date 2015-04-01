@@ -98,8 +98,8 @@ void ofApp::update() {
       float blobx = contourFinder.blobs[0].centroid.x;
       float bloby = contourFinder.blobs[0].centroid.y;
 
-      const float xPercent = ofMap(blobx, kinect.width, 0, -1.0, 1.0);
-      const float yPercent = ofMap(bloby, 0, kinect.height,-1.0, 1.0);
+      const float xPercent = ofMap(blobx, kinect.width, 0,  0.0, 1.0);
+      const float yPercent = ofMap(bloby, 0, kinect.height, 0.0, 1.0);
 
       const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
       const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
