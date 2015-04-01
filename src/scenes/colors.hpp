@@ -21,11 +21,11 @@ class Colors : public ofxScene {
       int w = ofGetViewportWidth();
       int h = ofGetViewportHeight();
 
-      a.setup(ofColor(0,255,255), 2*w/6, h/4*3, 100, 1.5);
+      a.setup(ofColor(0,255,255), 2*w/6, h/6*5, 100, 1.5);
       ofAddListener(a.SELECTED, this, &Colors::setColor);
-      b.setup(ofColor(255,0,255), 3*w/6, h/4*3, 100, 1.5);
+      b.setup(ofColor(255,0,255), 3*w/6, h/6*5, 100, 1.5);
       ofAddListener(b.SELECTED, this, &Colors::setColor);
-      c.setup(ofColor(255,255,0), 4*w/6, h/4*3, 100, 1.5);
+      c.setup(ofColor(255,255,0), 4*w/6, h/6*5, 100, 1.5);
       ofAddListener(c.SELECTED, this, &Colors::setColor);
 
       timer.setup(2000);
@@ -33,24 +33,23 @@ class Colors : public ofxScene {
     }
 
     void update() {
-      a.update();
-      b.update();
-      c.update();
+      if(app->selectedColor != a.c) a.update();
+      if(app->selectedColor != b.c) b.update();
+      if(app->selectedColor != c.c) c.update();
       timer.update();
     }
 
     void nextScene(int &i){
-      cout << "going to next scene" << endl;
-      app->getSceneManager()->nextScene(true);
+      app->getSceneManager()->nextScene();
     }
 
-    void setColor(ofColor &c) {
+    void setColor(Circle &c) {
       bool found = false;
       for(ofColor & color : chosenColors)
-        if(color == c) { found = true; }
-      if(!found) chosenColors.push_back(c);
+        if(color == c.c) { found = true; }
+      if(!found) chosenColors.push_back(c.c);
       if(chosenColors.size() >= 3) timer.start(false);
-      app->selectedColor = c;
+      app->selectedColor = c.c;
     }
 
     void updateEnter(){

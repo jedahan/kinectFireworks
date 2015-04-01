@@ -31,8 +31,8 @@ class Play : public ofxScene {
       ofAddListener(c.SELECTED, this, &Play::selectColor);
     }
 
-    void selectColor(ofColor &c){
-      app->selectedColor = c;
+    void selectColor(Circle &c){
+      app->selectedColor = c.c;
     }
 
     void update() {

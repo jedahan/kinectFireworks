@@ -34,14 +34,14 @@ class Circle {
     }
 
     ofPath line;
-    ofEvent<ofColor> SELECTED;
+    ofEvent<Circle> SELECTED;
 
     void update() {
       if(startTime > 0){
         percent = (ofGetElapsedTimef() - startTime)/timeout;
         if(percent >= 1.0){
           startTime = endTime = -1;
-          ofNotifyEvent(SELECTED, c);
+          ofNotifyEvent(SELECTED, *this, this);
         }
         line.clear();
         if(percent > 360/line.getCircleResolution()/100.0){

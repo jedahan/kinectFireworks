@@ -23,8 +23,8 @@ class Welcome : public ofxScene {
        ofAddListener(circle.SELECTED, this, &Welcome::nextScene);
     }
 
-    void nextScene(ofColor &c) {
-      app->selectedColor = c;
+    void nextScene(Circle &c) {
+      app->selectedColor = c.c;
       app->nextScene();
     }
 
