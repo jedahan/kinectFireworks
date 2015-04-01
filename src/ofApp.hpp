@@ -36,6 +36,7 @@ class ofApp : public ofxScenesApp {
     void drawKinect();
 
     ofxKinect kinect;
+    float prevMouseX, prevMouseY;
 
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image

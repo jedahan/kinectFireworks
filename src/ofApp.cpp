@@ -47,6 +47,8 @@ void ofApp::setup(){
 
   ofGetAppPtr()->mouseX = ofGetWidth()/2;
   ofGetAppPtr()->mouseY = ofGetHeight()/2;
+  prevMouseX = ofGetAppPtr()->mouseX;
+  prevMouseY = ofGetAppPtr()->mouseY;
 
   font.load("helveticaneue.ttf", 30);
 
@@ -63,6 +65,7 @@ void ofApp::handTimedout(int &i){
 
 void ofApp::resetHandTimedout(ofMouseEventArgs &e){
   handTimeout.reset();
+  handTimeout.start(false);
   handFound = true;
 }
 void ofApp::drawStringCenter(string text){
@@ -96,23 +99,20 @@ void ofApp::update() {
       const float xPercent = ofMap(blobx, kinect.width, 0, -1.0, 1.0);
       const float yPercent = ofMap(bloby, 0, kinect.height,-1.0, 1.0);
 
-      if(handFound){
-        const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
-        const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
-        // TODO: switch to ofxAnimatable if this fails hard
-        // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
-        ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
-        ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
+      const float xScaledPercent = xPercent*xPercent*(3.0-2.0*xPercent); // easeInOut
+      const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
+      // TODO: switch to ofxAnimatable if this fails hard
+      // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
+      prevMouseX = ofGetAppPtr()->mouseX;
+      prevMouseY = ofGetAppPtr()->mouseY;
+      ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
+      ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
+      if(prevMouseX != ofGetAppPtr()->mouseX || prevMouseY != ofGetAppPtr()->mouseY){
         static ofMouseEventArgs mouseEventArgs;
         mouseEventArgs.x = ofGetAppPtr()->mouseX;
         mouseEventArgs.y = ofGetAppPtr()->mouseY;
         ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
-      } else {
-        if(-0.5 < xPercent < 0.5 && -0.5 < yPercent < 0.5) {
-          handFound = true;
-          handTimeout.start(false);
-        }
-     }
+      }
     }
   }
 
