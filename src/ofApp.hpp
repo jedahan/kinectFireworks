@@ -22,7 +22,7 @@ class ofApp : public ofxScenesApp {
     void drawStringCenter(string text);
     void appTimedout(int &i);
     void handTimedout(int &i);
-    void resetHandTimedout(ofMouseEventArgs &e);
+    void handMoved(ofMouseEventArgs &e);
 
     ofxSceneManager sceneManager;
     ofxSimpleTimer timer;
@@ -36,7 +36,6 @@ class ofApp : public ofxScenesApp {
     void drawKinect();
 
     ofxKinect kinect;
-    float prevMouseX, prevMouseY;
 
     ofxCvGrayscaleImage grayImage; // grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image

@@ -43,12 +43,10 @@ void ofApp::setup(){
   handTimeout.start(false);
   ofAddListener(handTimeout.TIMER_COMPLETE, this, &ofApp::handTimedout);
   // this listener will reset the hand listener if the mouse has moved
-  ofAddListener(ofEvents().mouseMoved, this, &ofApp::resetHandTimedout);
+  ofAddListener(ofEvents().mouseMoved, this, &ofApp::handMoved);
 
   ofGetAppPtr()->mouseX = ofGetWidth()/2;
   ofGetAppPtr()->mouseY = ofGetHeight()/2;
-  prevMouseX = ofGetAppPtr()->mouseX;
-  prevMouseY = ofGetAppPtr()->mouseY;
 
   font.load("helveticaneue.ttf", 30);
 
@@ -61,9 +59,11 @@ void ofApp::setup(){
 
 void ofApp::handTimedout(int &i){
   handFound = false;
+  appTimeout.start(false);
 }
 
-void ofApp::resetHandTimedout(ofMouseEventArgs &e){
+void ofApp::handMoved(ofMouseEventArgs &e){
+  appTimeout.reset();
   handTimeout.reset();
   handTimeout.start(false);
   handFound = true;
@@ -105,16 +105,12 @@ void ofApp::update() {
       const float yScaledPercent = yPercent*yPercent*(3.0-2.0*yPercent); // easeInOut
       // TODO: switch to ofxAnimatable if this fails hard
       // OR TRY http://cubic-bezier.com/#.42,0,.58,1 ofInterpolateCubic(0.42,0.00,0.58,1.00,percent)...
-      prevMouseX = ofGetAppPtr()->mouseX;
-      prevMouseY = ofGetAppPtr()->mouseY;
       ofGetAppPtr()->mouseX = ofLerp(ofGetAppPtr()->mouseX, xScaledPercent * ofGetWidth(), 0.27);
       ofGetAppPtr()->mouseY = ofLerp(ofGetAppPtr()->mouseY, yScaledPercent * ofGetHeight(), 0.26);
-      if(prevMouseX != ofGetAppPtr()->mouseX || prevMouseY != ofGetAppPtr()->mouseY){
-        static ofMouseEventArgs mouseEventArgs;
-        mouseEventArgs.x = ofGetAppPtr()->mouseX;
-        mouseEventArgs.y = ofGetAppPtr()->mouseY;
-        ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
-      }
+      static ofMouseEventArgs mouseEventArgs;
+      mouseEventArgs.x = ofGetAppPtr()->mouseX;
+      mouseEventArgs.y = ofGetAppPtr()->mouseY;
+      ofNotifyEvent(ofEvents().mouseMoved, mouseEventArgs);
     }
   }
 
