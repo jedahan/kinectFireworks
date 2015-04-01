@@ -20,6 +20,7 @@ class Colors : public ofxScene {
     void setup() {
       int w = ofGetViewportWidth();
       int h = ofGetViewportHeight();
+      chosenColors.clear();
 
       a.setup(ofColor(0,255,255), 2*w/6, h/6*5, 100, 1.5);
       ofAddListener(a.SELECTED, this, &Colors::setColor);
