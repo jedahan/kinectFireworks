@@ -80,6 +80,8 @@ void ofApp::start(int &i){
 // the scene manager will handle scene.update()
 void ofApp::update() {
   timer.update();
+  appTimeout.update();
+  handTimeout.update();
 
   kinect.update();
   if(kinect.isFrameNew()) {
