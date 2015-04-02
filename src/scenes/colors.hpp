@@ -22,11 +22,11 @@ class Colors : public ofxScene {
       int h = ofGetViewportHeight();
       chosenColors.clear();
 
-      a.setup(ofColor(0,255,255), 2*w/6, h/6*5, 100, 1.5);
+      a.setup(ofColor(0,255,255), 2*w/6, h/2, 100, 1.5);
       ofAddListener(a.SELECTED, this, &Colors::setColor);
-      b.setup(ofColor(255,0,255), 3*w/6, h/6*5, 100, 1.5);
+      b.setup(ofColor(255,0,255), 3*w/6, h/2, 100, 1.5);
       ofAddListener(b.SELECTED, this, &Colors::setColor);
-      c.setup(ofColor(255,255,0), 4*w/6, h/6*5, 100, 1.5);
+      c.setup(ofColor(255,255,0), 4*w/6, h/2, 100, 1.5);
       ofAddListener(c.SELECTED, this, &Colors::setColor);
 
       timer.setup(2000);
@@ -41,6 +41,7 @@ class Colors : public ofxScene {
     }
 
     void nextScene(int &i){
+      chosenColors.clear();
       app->getSceneManager()->nextScene(true);
     }
 
@@ -68,7 +69,7 @@ class Colors : public ofxScene {
       b.draw();
       c.draw();
       if(chosenColors.size()<3){
-        app->drawStringCenter("Now choose each of the colors ("+ofToString(3-chosenColors.size())+" left)");
+        app->drawStringCenter("Hover over each of the circles to change colors ("+ofToString(3-chosenColors.size())+" left)");
       } else {
         app->drawStringCenter("Woohoo! Let's move on...");
       }

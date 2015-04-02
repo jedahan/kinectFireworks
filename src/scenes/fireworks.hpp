@@ -6,23 +6,40 @@
 #include "../ofApp.hpp"
 #include "../Circle.hpp"
 
-class Firework : public ofxScene {
+class Fireworks : public ofxScene {
 
   public:
     ofApp * app;
     ofPolyline trail;
     vector<ofMesh> fireworks;
     int explode_count;
-    ofxSimpleTimer timer;
+    Circle x, y, z;
+    ofxSimpleTimer fireworkTimer;
 
-    Firework() : ofxScene("Firework") {
+    Fireworks() : ofxScene("Fireworks") {
       app = (ofApp*) ofxGetAppPtr();
     }
 
     void setup() {
       explode_count = 0;
-      timer.setup(2000);
-      ofAddListener(timer.TIMER_COMPLETE, this, &Firework::nextScene);
+      float w = ofGetWidth();
+      float h = ofGetHeight();
+      x.setup(ofColor(0,255,255), 2*w/6, h*2/3, 100, 1.5);
+      y.setup(ofColor(255,0,255), 3*w/6, h*2/3, 100, 1.5);
+      z.setup(ofColor(255,255,0), 4*w/6, h*2/3, 100, 1.5);
+      ofAddListener(x.SELECTED, this, &Fireworks::setColor);
+      ofAddListener(y.SELECTED, this, &Fireworks::setColor);
+      ofAddListener(z.SELECTED, this, &Fireworks::setColor);
+      fireworkTimer.setup(3000);
+      ofAddListener(fireworkTimer.TIMER_COMPLETE, this, &Fireworks::popFirework);
+    }
+
+    void setColor(Circle &c){
+      app->selectedColor = c.c;
+    }
+
+    void popFirework(int &i){
+      points.clear();
     }
 
     void nextScene(int &i){
@@ -31,11 +48,15 @@ class Firework : public ofxScene {
 
     void update() {
       updateTrail();
-      timer.update();
+      if(app->selectedColor != x.c) x.update();
+      if(app->selectedColor != y.c) y.update();
+      if(app->selectedColor != z.c) z.update();
+      fireworkTimer.update();
       updateFireworks();
     }
 
     void updateEnter(){
+      explode_count=0;
       update();
       finishedEntering();
     }
@@ -76,17 +97,16 @@ class Firework : public ofxScene {
           app->drawStringCenter("Swipe your hand quickly");
           break;
         case 1:
-          app->drawStringCenter("coool, now swipe " + ofToString(4-explode_count) + " more times");
+          app->drawStringCenter("coool fireworks! do it again!");
           break;
         case 2:
-          app->drawStringCenter("POW! I wanna see " + ofToString(4-explode_count) + " more fireworks!");
+          app->drawStringCenter("POW! alright, you got the hang of this");
           break;
         case 3:
-          app->drawStringCenter("WOOHA! Just one more before we start the main show..");
+          app->drawStringCenter("I'll leave you to your own show...");
           break;
         default:
-          app->drawStringCenter("Alright, time to play");
-          timer.start(false);
+          app->drawStringCenter("I'll leave you to your own show...");
           break;
       }
 
@@ -94,6 +114,10 @@ class Firework : public ofxScene {
         firework.drawVertices();
 
       trail.draw();
+
+      x.draw();
+      y.draw();
+      z.draw();
     }
 
     void explode(int x0, int y0, int x1, int y1){

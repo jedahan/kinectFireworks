@@ -14,8 +14,7 @@ void ofApp::setup(){
 
   sceneManager.add(new Welcome());
   sceneManager.add(new Colors());
-  sceneManager.add(new Firework());
-  sceneManager.add(new Play());
+  sceneManager.add(new Fireworks());
   sceneManager.setup();
 
   selectedColor = ofColor(127);
