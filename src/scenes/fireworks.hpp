@@ -115,6 +115,7 @@ class Fireworks : public ofxScene {
       vbo.draw();
 
       ofDisablePointSprites();
+      ofDisableAlphaBlending();
 
       glBegin(GL_POINTS);
       glVertex2d(500,500);
