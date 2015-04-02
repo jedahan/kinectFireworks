@@ -11,7 +11,7 @@ class Fireworks : public ofxScene {
   public:
     ofApp * app;
     ofPolyline trail;
-    vector<ofMesh> fireworks;
+    deque<ofMesh> fireworks;
     int explode_count;
     Circle x, y, z;
     ofxSimpleTimer fireworkTimer;
@@ -39,7 +39,7 @@ class Fireworks : public ofxScene {
     }
 
     void popFirework(int &i){
-      points.clear();
+      fireworks.pop_front();
     }
 
     void nextScene(int &i){
@@ -103,10 +103,9 @@ class Fireworks : public ofxScene {
           app->drawStringCenter("POW! alright, you got the hang of this");
           break;
         case 3:
-          app->drawStringCenter("I'll leave you to your own show...");
+          app->drawStringCenter("Now make your own show!");
           break;
         default:
-          app->drawStringCenter("I'll leave you to your own show...");
           break;
       }
 
