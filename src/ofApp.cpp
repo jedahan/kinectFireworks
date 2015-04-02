@@ -10,8 +10,8 @@ void ofApp::setup(){
   debug = false;
   handFound = debug;
 
-  float radius=ofGetHeight()/20;
-  restartCircle.setup(ofColor(ofRandom(15,127),ofRandom(15,127),ofRandom(15,127)), ofGetWidth()-4*radius, ofGetHeight()-4*radius, radius, 2);
+  float radius=99;
+  restartCircle.setup(ofColor(ofRandom(15,127)), ofGetWidth()-4*radius, ofGetHeight()-4*radius, radius, 2);
   ofAddListener(restartCircle.SELECTED, this, &ofApp::restart);
   setupKinect();
 
