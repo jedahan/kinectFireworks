@@ -88,7 +88,7 @@ class Fireworks : public ofxScene {
     void updateFireworks() {
       for(auto & firework : fireworks)
         for(auto & vertex : firework.getVertices())
-          vertex += ofPoint(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
+          vertex += ofPoint(25*(0.5-ofRandomuf()),25*(0.5-ofRandomuf()),0);
     }
 
     void draw() {
@@ -122,8 +122,8 @@ class Fireworks : public ofxScene {
     void explode(int x0, int y0, int x1, int y1){
       explode_count++;
       ofMesh firework;
-      app->selectedColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
-      for(unsigned int i=0; i<200; i++){
+      app->selectedColor = ofColor(ofRandom(127,255),ofRandom(127,255),ofRandom(127,255));
+      for(unsigned int i=0; i<500; i++){
         firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
         firework.addColor(app->selectedColor);
       }
