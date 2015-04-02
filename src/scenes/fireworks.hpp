@@ -11,16 +11,33 @@ class Fireworks : public ofxScene {
   public:
     ofApp * app;
     ofPolyline trail;
-    deque<ofMesh> fireworks;
     int explode_count;
     Circle x, y, z;
     ofxSimpleTimer fireworkTimer;
+
+    ofShader shader;
+    ofTexture texture;
+    ofVbo vbo;
+    vector<ofVec2f> points;
+    vector<ofVec2f> sizes;
+    vector<ofVec2f> velocities;
 
     Fireworks() : ofxScene("Fireworks") {
       app = (ofApp*) ofxGetAppPtr();
     }
 
     void setup() {
+      ofDisableArbTex();
+      ofLoadImage(texture,"dot.png");
+
+      int total=(int)points.size();
+      vbo.setVertexData(&points[0], total, GL_DYNAMIC_DRAW);
+      vbo.setVertexData(&sizes[0], total, GL_DYNAMIC_DRAW);
+#ifdef TARGET_OPENGLES
+      shader.load("shaders_gles/shader");
+#else
+      shader.load("shaders/shader");
+#endif
       explode_count = 0;
       float w = ofGetWidth();
       float h = ofGetHeight();
@@ -86,12 +103,23 @@ class Fireworks : public ofxScene {
     }
 
     void updateFireworks() {
-      for(auto & firework : fireworks)
-        for(auto & vertex : firework.getVertices())
-          vertex += ofPoint(15*(0.5-ofRandomuf()),15*(0.5-ofRandomuf()),0);
+      for(int i=0; i<points.size(); i++)
+        points[i] += ofVec3f(100*(0.5-ofRandomuf()),100*(0.5-ofRandomuf()),0);
     }
 
     void draw() {
+      glDepthMask(GL_FALSE);
+      ofSetColor(255,100,90);
+      ofEnableBlendMode(OF_BLENDMODE_ADD);
+      ofEnablePointSprites();
+      shader.begin();
+      texture.bind();
+      vbo.draw(GL_POINTS, 0, (int)points.size());
+      texture.unbind();
+      shader.end();
+      ofDisablePointSprites();
+      ofDisableBlendMode();
+
       switch(explode_count){
         case 0:
           app->drawStringCenter("Swipe your hand quickly");
@@ -110,9 +138,6 @@ class Fireworks : public ofxScene {
           break;
       }
 
-      for(auto & firework : fireworks)
-        firework.drawVertices();
-
       trail.draw();
 
       x.draw();
@@ -122,13 +147,15 @@ class Fireworks : public ofxScene {
 
     void explode(int x0, int y0, int x1, int y1){
       explode_count++;
-      ofMesh firework;
-      for(unsigned int i=0; i<1000; i++){
-        firework.addVertex(ofVec3f(x1+(ofRandom(80)-40),(y1+ofRandom(80)-40),0));
-        firework.addColor(app->selectedColor);
+      for(int i=0; i<100; i++){
+        points[i].x = x1 + 50*(ofRandomuf()-0.5);
+        points[i].y = y1 + 50*(ofRandomuf()-0.5);
+        velocities[i].x = ofRandomuf();
+        velocities[i].y = ofRandomuf();
       }
-      fireworks.clear();
-      fireworks.push_back(firework);
+
+      int total = (int)points.size();
+      vbo.setVertexData(&points[0], total, GL_DYNAMIC_DRAW);
     }
 
 };
