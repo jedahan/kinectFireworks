@@ -70,7 +70,10 @@ class Fireworks : public ofxScene {
       if(app->selectedColor != y.c) y.update();
       if(app->selectedColor != z.c) z.update();
       fireworkTimer.update();
-      updateFireworks();
+      /*
+      for(int i=0; i<points.size(); i++)
+        points[i] += vels[i];
+      */
     }
 
     void updateEnter(){
@@ -107,11 +110,6 @@ class Fireworks : public ofxScene {
           trail.clear();
         }
       }
-    }
-
-    void updateFireworks() {
-      for(int i=0; i<points.size(); i++)
-        points[i] += vels[i];
     }
 
     void draw() {
