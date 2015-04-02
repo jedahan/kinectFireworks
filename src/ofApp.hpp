@@ -15,6 +15,7 @@ class ofApp : public ofxScenesApp {
   public:
     void setup();
     void start(int &args);
+    void restart(Circle &c);
     void update();
     void draw();
     void keyPressed(int key);
@@ -34,6 +35,8 @@ class ofApp : public ofxScenesApp {
 
     void setupKinect();
     void drawKinect();
+
+    Circle restartCircle;
 
     ofxKinect kinect;
 

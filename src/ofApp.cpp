@@ -10,6 +10,9 @@ void ofApp::setup(){
   debug = false;
   handFound = debug;
 
+  float radius=ofGetHeight()/20;
+  restartCircle.setup(ofColor(ofRandom(15,127),ofRandom(15,127),ofRandom(15,127)), ofGetWidth()-4*radius, ofGetHeight()-4*radius, radius, 2);
+  ofAddListener(restartCircle.SELECTED, this, &ofApp::restart);
   setupKinect();
 
   sceneManager.add(new Welcome());
@@ -72,6 +75,11 @@ void ofApp::drawStringCenter(string text){
   font.drawString(text, (ofGetWidth()-font.stringWidth(text))/2, font.stringHeight(text)*2);
 }
 
+void ofApp::restart(Circle &c){
+  int a=18;
+  start(a);
+}
+
 void ofApp::start(int &i){
   sceneManager.gotoScene(sceneManager.getSceneIndex("Welcome"), true);
 }
@@ -113,10 +121,18 @@ void ofApp::update() {
     }
   }
 
+  restartCircle.update();
 }
 
 // the scene manager will handle scene.draw()
 void ofApp::draw() {
+  if(sceneManager.getCurrentSceneName()!="Welcome"){
+    restartCircle.draw();
+    ofSetColor(255,255,255);
+    string text="restart";
+    font.drawString(text, restartCircle.x-font.stringWidth(text)/2, restartCircle.y+font.stringHeight(text)/2);
+  }
+
   if(handFound || debug){
     ofSetColor(255,255,255);
     highlight.draw(mouseX, mouseY);
