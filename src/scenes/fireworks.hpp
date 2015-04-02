@@ -17,7 +17,7 @@ class Fireworks : public ofxScene {
 
     ofShader shader;
     ofTexture texture;
-    ofVbo vbo;
+    ofVboMesh vbo;
     vector<ofVec3f> points;
     vector<ofVec3f> sizes;
     vector<ofVec3f> vels;
@@ -38,15 +38,11 @@ class Fireworks : public ofxScene {
       ofAddListener(z.SELECTED, this, &Fireworks::setColor);
       fireworkTimer.setup(3000);
       ofAddListener(fireworkTimer.TIMER_COMPLETE, this, &Fireworks::popFirework);
+
+      vbo.clear();
+      vbo.setMode(OF_PRIMITIVE_POINTS);
       ofDisableArbTex();
       ofLoadImage(texture,"dot.png");
-      updateVbo();
-#ifdef TARGET_OPENGLES
-      shader.load("shaders_gles/shader");
-#else
-      shader.load("shaders/shader");
-#endif
-
     }
 
     void setColor(Circle &c){
@@ -57,7 +53,6 @@ class Fireworks : public ofxScene {
       cout << "popping firework" << endl;
       points.clear();
       sizes.clear();
-      updateVbo();
     }
 
     void nextScene(int &i){
@@ -70,10 +65,13 @@ class Fireworks : public ofxScene {
       if(app->selectedColor != y.c) y.update();
       if(app->selectedColor != z.c) z.update();
       fireworkTimer.update();
-      /*
-      for(int i=0; i<points.size(); i++)
-        points[i] += vels[i];
-      */
+
+      for(int i=0; i<vbo.getVertices().size(); i++) {
+        ofVec2f p = vbo.getVertex(i);
+        p.x += 10*(0.5-ofRandomuf());
+        p.y += 10*(0.5-ofRandomuf());
+        vbo.setVertex(i, p);
+      }
     }
 
     void updateEnter(){
@@ -85,12 +83,6 @@ class Fireworks : public ofxScene {
     void updateExit(){
       update();
       finishedExiting();
-    }
-
-    void updateVbo(){
-      int total = (int)points.size();
-      vbo.setVertexData(&points[0], total, GL_DYNAMIC_DRAW);
-      vbo.setNormalData(&sizes[0], total, GL_DYNAMIC_DRAW);
     }
 
     void updateTrail() {
@@ -113,18 +105,20 @@ class Fireworks : public ofxScene {
     }
 
     void draw() {
-      glDepthMask(GL_FALSE);
-      ofSetColor(app->selectedColor);
-      ofEnableBlendMode(OF_BLENDMODE_ADD);
+      ofBackground(0,0,0);
+
+      ofEnableAlphaBlending();
       ofEnablePointSprites();
-      shader.begin();
+
+      glPointSize(5);
       texture.bind();
-      vbo.draw(GL_POINTS, 0, (int)points.size());
-      texture.unbind();
-      shader.end();
+      vbo.draw();
+
       ofDisablePointSprites();
-      ofDisableBlendMode();
-      glDepthMask(GL_TRUE);
+
+      glBegin(GL_POINTS);
+      glVertex2d(500,500);
+      glEnd();
 
       switch(explode_count){
         case 0:
@@ -153,24 +147,16 @@ class Fireworks : public ofxScene {
 
     void explode(int x0, int y0, int x1, int y1){
       explode_count++;
-
-      for(int i=0; i<100; i++){
-        addPoint(x1, y1, x1-x0 + ofRandomuf(), y1-y0 + ofRandomuf());
+      vbo.clear();
+      for(int i=0; i<500; i++){
+        addPoint(x1, y1, x1-x0 + 25*(0.5-ofRandomuf()), y1-y0 + 25*(0.5-ofRandomuf()));
       }
-
-      updateVbo();
     }
 
     void addPoint(float x, float y, float vx, float vy) {
-      ofVec3f p = ofVec3f(x, y, 0.5);
-      p *= 400;
-      points.push_back(p);
-
-      float size = ofRandom(5, 50);
-      sizes.push_back(ofVec3f(size));
-
-      ofVec3f v(vx, vy, 0);
-      vels.push_back(v);
+      ofVec3f p = ofVec2f(x, y);
+      vbo.addVertex(p);
+      vbo.addColor(app->selectedColor);
     }
 
 };
