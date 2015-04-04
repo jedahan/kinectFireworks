@@ -17,6 +17,7 @@ class Fireworks : public ofxScene {
     ofShader shader;
     ofTexture texture;
     ofVboMesh vbo;
+    vector<ofPoint> velocities;
 
     Fireworks() : ofxScene("Fireworks") {
       app = (ofApp*) ofxGetAppPtr();
@@ -54,9 +55,10 @@ class Fireworks : public ofxScene {
       if(app->selectedColor != z.c) z.update();
 
       for(int i=0; i<vbo.getNumVertices(); i++) {
-        ofPoint p = vbo.getVertex(i);
-        p.x += 10*(0.5-ofRandomuf());
-        p.y += 10*(0.5-ofRandomuf());
+        velocities[i].x += 0.5-ofRandomuf();
+        velocities[i].y += 0.5-ofRandomuf();
+        velocities[i].y += 2.0/ofGetFrameRate(); // gravity
+        ofPoint p = vbo.getVertex(i) + velocities[i];
         vbo.setVertex(i, p);
       }
     }
@@ -132,9 +134,14 @@ class Fireworks : public ofxScene {
     void explode(int x0, int y0, int x1, int y1){
       explode_count++;
       vbo.clear();
+      velocities.clear();
       for(int i=0; i<500; i++){
         vbo.addVertex(ofPoint(x1,y1));
         vbo.addColor(app->selectedColor);
+        ofPoint p = ofPoint(ofNormalize(x1-x0, 0, ofGetWidth()), ofNormalize(y1-y0,0,ofGetHeight()));
+        p.x += (0.5-ofRandomuf());
+        p.y += (0.5-ofRandomuf());
+        velocities.push_back(10*p);
       }
     }
 
