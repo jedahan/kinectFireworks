@@ -53,8 +53,8 @@ class Fireworks : public ofxScene {
       if(app->selectedColor != y.c) y.update();
       if(app->selectedColor != z.c) z.update();
 
-      for(int i=0; i<vbo.getVertices().size(); i++) {
-        ofVec2f p = vbo.getVertex(i);
+      for(int i=0; i<vbo.getNumVertices(); i++) {
+        ofPoint p = vbo.getVertex(i);
         p.x += 10*(0.5-ofRandomuf());
         p.y += 10*(0.5-ofRandomuf());
         vbo.setVertex(i, p);
