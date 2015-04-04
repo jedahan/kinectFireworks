@@ -13,14 +13,10 @@ class Fireworks : public ofxScene {
     ofPolyline trail;
     int explode_count;
     Circle x, y, z;
-    ofxSimpleTimer fireworkTimer;
 
     ofShader shader;
     ofTexture texture;
     ofVboMesh vbo;
-    vector<ofVec3f> points;
-    vector<ofVec3f> sizes;
-    vector<ofVec3f> vels;
 
     Fireworks() : ofxScene("Fireworks") {
       app = (ofApp*) ofxGetAppPtr();
@@ -36,8 +32,6 @@ class Fireworks : public ofxScene {
       ofAddListener(x.SELECTED, this, &Fireworks::setColor);
       ofAddListener(y.SELECTED, this, &Fireworks::setColor);
       ofAddListener(z.SELECTED, this, &Fireworks::setColor);
-      fireworkTimer.setup(3000);
-      ofAddListener(fireworkTimer.TIMER_COMPLETE, this, &Fireworks::popFirework);
 
       vbo.clear();
       vbo.setMode(OF_PRIMITIVE_POINTS);
@@ -49,12 +43,6 @@ class Fireworks : public ofxScene {
       app->selectedColor = c.c;
     }
 
-    void popFirework(int &i){
-      cout << "popping firework" << endl;
-      points.clear();
-      sizes.clear();
-    }
-
     void nextScene(int &i){
       app->getSceneManager()->nextScene(true);
     }
@@ -64,7 +52,6 @@ class Fireworks : public ofxScene {
       if(app->selectedColor != x.c) x.update();
       if(app->selectedColor != y.c) y.update();
       if(app->selectedColor != z.c) z.update();
-      fireworkTimer.update();
 
       for(int i=0; i<vbo.getVertices().size(); i++) {
         ofVec2f p = vbo.getVertex(i);
