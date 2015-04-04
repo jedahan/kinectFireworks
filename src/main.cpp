@@ -2,7 +2,10 @@
 #include "ofApp.hpp"
 
 int main(){
-  ofSetupOpenGL(1024, 768, OF_FULLSCREEN);
+  ofGLWindowSettings glWindowSettings;
+  glWindowSettings.setGLVersion(2,1);
+  glWindowSettings.windowMode = OF_FULLSCREEN;
+  ofCreateWindow(glWindowSettings);
   ofHideCursor();
   ofRunScenesApp(new ofApp());
 }
