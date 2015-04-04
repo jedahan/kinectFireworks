@@ -133,14 +133,9 @@ class Fireworks : public ofxScene {
       explode_count++;
       vbo.clear();
       for(int i=0; i<500; i++){
-        addPoint(x1, y1, x1-x0 + 25*(0.5-ofRandomuf()), y1-y0 + 25*(0.5-ofRandomuf()));
+        vbo.addVertex(ofPoint(x1,y1));
+        vbo.addColor(app->selectedColor);
       }
-    }
-
-    void addPoint(float x, float y, float vx, float vy) {
-      ofVec3f p = ofVec2f(x, y);
-      vbo.addVertex(p);
-      vbo.addColor(app->selectedColor);
     }
 
 };
