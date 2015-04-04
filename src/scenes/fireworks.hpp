@@ -94,19 +94,15 @@ class Fireworks : public ofxScene {
     void draw() {
       ofBackground(0,0,0);
 
-      ofEnableAlphaBlending();
-      ofEnablePointSprites();
+      if(vbo.getNumVertices()){
+        ofEnablePointSprites();
 
-      glPointSize(5);
-      texture.bind();
-      vbo.draw();
+        glPointSize(5);
+        texture.bind();
+        vbo.drawVertices();
 
-      ofDisablePointSprites();
-      ofDisableAlphaBlending();
-
-      glBegin(GL_POINTS);
-      glVertex2d(500,500);
-      glEnd();
+        ofDisablePointSprites();
+      }
 
       switch(explode_count){
         case 0:
