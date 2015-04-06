@@ -100,7 +100,6 @@ class Fireworks : public ofxScene {
         ofEnablePointSprites();
 
         glPointSize(5);
-        texture.bind();
         vbo.drawVertices();
 
         ofDisablePointSprites();
