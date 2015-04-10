@@ -47,7 +47,7 @@ class Colors : public ofxScene {
 
     void setColor(Circle &c) {
       bool found = false;
-      for(ofColor & color : chosenColors)
+      for(auto & color : chosenColors)
         if(color == c.c) { found = true; }
       if(!found) chosenColors.push_back(c.c);
       if(chosenColors.size() >= 3) timer.start(false);
